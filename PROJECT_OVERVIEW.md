@@ -26,7 +26,13 @@ The system is divided into four distinct layers following Clean Architecture:
 
 ---
 
-## 4. Detailed File Structure
+## 4. Standalone Queue System
+While the notification system is the primary use case, the infrastructure in `src/infrastructure/queue/` provides a generalized pattern for any background task.
+- **Producer**: Type-safe `enqueueJob` wrapper with built-in Zod validation.
+- **Idempotency**: Enforced by mapping business IDs to the `jobId` parameter in BullMQ.
+- **Infrastructure**: Optimized IORedis singleton with TLS support for Upstash.
+
+## 5. Detailed File Structure
 
 ```text
 /

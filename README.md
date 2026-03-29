@@ -6,6 +6,7 @@ A robust, modular notification system built with **Next.js (App Router)**, **Bul
 - **Durable Enqueuing**: All notifications are persisted to PostgreSQL before queuing.
 - **Provider Strategy**: Easy-to-extend system for Email (ZeptoMail), SMS (Twilio), and Push (OneSignal).
 - **Asynchronous Processing**: Background workers handle all delivery tasks to minimize API latency.
+- **Standalone Queue System**: A generalized BullMQ infrastructure for extending to any background tasks.
 - **Audit Logs**: Full history of every delivery attempt (Success/Failure) for every notification.
 - **Exactly-Once Protection**: Idempotency keys prevent duplicate notifications for the same event.
 

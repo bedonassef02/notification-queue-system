@@ -32,7 +32,7 @@ src/
 - **Rediss Protocol**: Handling TLS by default for Upstash security.
 
 ## 5. Success Criteria
-- [ ] Redis connection is successfully established with TLS.
-- [ ] Jobs are enqueued with 3 retry attempts and exponential backoff.
-- [ ] Duplicate jobs (same `jobId`) are rejected by Redis.
-- [ ] Integration with a Next.js API route works without latency spikes.
+- [X] Redis connection is successfully established with TLS.
+- [X] Jobs are enqueued with 3 retry attempts and exponential backoff.
+- [X] Duplicate jobs (same `jobId`) are rejected by Redis.
+- [X] Integration with a Next.js API route works without latency spikes.

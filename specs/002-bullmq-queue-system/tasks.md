@@ -21,19 +21,19 @@ We focus on building the **Infrastructure Core** first, ensuring that the Redis 
 **Goal**: Standardize the enqueuing of jobs with automatic idempotency and retry handling.
 **Test Criteria**: Calling the producer generates a BullMQ job with a custom `jobId` and exponential backoff configuration.
 
-- [ ] T005 [P] [US1] Define Zod validation schemas for Job payloads in `src/infrastructure/queue/producer.ts`
-- [ ] T006 [US1] Implement the `enqueueJob` producer wrapper in `src/infrastructure/queue/producer.ts`
+- [X] T005 [P] [US1] Define Zod validation schemas for Job payloads in `src/infrastructure/queue/producer.ts`
+- [X] T006 [US1] Implement the `enqueueJob` producer wrapper in `src/infrastructure/queue/producer.ts`
 
 ## Phase 4: Integration & Example
 
 **Goal**: Verify the queue system works within the Next.js API environment.
 **Test Criteria**: A POST request to the example route successfully enqueues a job into Redis.
 
-- [ ] T007 Implement example API route for job creation in `src/app/api/example-job/route.ts`
+- [X] T007 Implement example API route for job creation in `src/app/api/example-job/route.ts`
 
 ## Final Phase: Documentation
 
-- [ ] T008 Add technical usage guide for developers in `src/infrastructure/queue/README.md`
+- [X] T008 Add technical usage guide for developers in `src/infrastructure/queue/README.md`
 
 ## Dependencies
 
