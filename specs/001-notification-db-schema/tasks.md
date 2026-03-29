@@ -40,11 +40,11 @@ We follow the **MVP First** strategy. Phase 3 (US1) establishes the core ingesti
 
 **Goal**: Execute the notifications via external providers following the strategy pattern.
 
-- [ ] T016 [P] Implement ZeptoMail provider in `src/infrastructure/providers/email-zeptomail.ts`
-- [ ] T017 [P] Implement Twilio SMS provider in `src/infrastructure/providers/sms-twilio.ts`
-- [ ] T018 [P] Implement OneSignal Push provider in `src/infrastructure/providers/push-onesignal.ts`
-- [ ] T019 Implement BullMQ worker processor logic in `src/workers/processor.ts`
-- [ ] T020 [P] Create standalone worker entry point in `src/workers/main-worker.ts`
+- [X] T016 [P] Implement ZeptoMail provider in `src/infrastructure/providers/email-zeptomail.ts`
+- [X] T017 [P] Implement Twilio SMS provider in `src/infrastructure/providers/sms-twilio.ts`
+- [X] T018 [P] Implement OneSignal Push provider in `src/infrastructure/providers/push-onesignal.ts`
+- [X] T019 Implement BullMQ worker processor logic in `src/workers/processor.ts`
+- [X] T020 [P] Create standalone worker entry point in `src/workers/main-worker.ts`
 
 ## Phase 6: Polish & Coordination
 
