@@ -8,15 +8,15 @@ We follow the **MVP First** strategy. Phase 3 (US1) establishes the core ingesti
 
 ## Phase 1: Setup
 
-- [ ] T001 Initialize Next.js project structure
-- [ ] T002 Install dependencies (`bullmq`, `ioredis`, `@prisma/client`, `zod`, `twilio`, `zeptomail`, `onesignal-node`)
-- [ ] T003 Configure environment variables (`.env`) for Neon, Upstash, and providers
+- [X] T001 Initialize Next.js project structure
+- [X] T002 Install dependencies (`bullmq`, `ioredis`, `@prisma/client`, `zod`, `twilio`, `zeptomail`, `onesignal-node`)
+- [X] T003 Configure environment variables (`.env`) for Neon, Upstash, and providers
 
 ## Phase 2: Foundational
 
-- [ ] T004 [P] Create Prisma schema in `prisma/schema.prisma`
+- [X] T004 [P] Create Prisma schema in `prisma/schema.prisma`
 - [ ] T005 [P] Run Prisma migration to Neon
-- [ ] T006 [P] Initialize Redis/BullMQ connection utility in `src/infrastructure/queue/bullmq.ts`
+- [X] T006 [P] Initialize Redis/BullMQ connection utility in `src/infrastructure/queue/bullmq.ts`
 
 ## Phase 3: User Story 1 (US1) - Enqueue Notifications
 

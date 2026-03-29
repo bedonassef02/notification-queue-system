@@ -1,0 +1,38 @@
+{
+  "name": "notify-flow",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "worker:start": "ts-node-esm src/workers/main-worker.ts",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev"
+  },
+  "dependencies": {
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "bullmq": "latest",
+    "ioredis": "latest",
+    "@prisma/client": "latest",
+    "zod": "latest",
+    "twilio": "latest",
+    "zeptomail": "latest",
+    "onesignal-node": "latest",
+    "dotenv": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "typescript": "latest",
+    "tailwindcss": "latest",
+    "postcss": "latest",
+    "autoprefixer": "latest",
+    "prisma": "latest",
+    "ts-node": "latest"
+  }
+}

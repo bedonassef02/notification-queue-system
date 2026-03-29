@@ -1,0 +1,53 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum NotificationType {
+  EMAIL
+  SMS
+  PUSH
+}
+
+enum NotificationStatus {
+  PENDING
+  PROCESSING
+  SENT
+  FAILED
+  PERMANENT_FAILURE
+}
+
+model Notification {
+  id              String             @id @default(uuid()) @db.Uuid
+  type            NotificationType
+  recipient       String
+  payload         Json               @db.JsonB
+  status          NotificationStatus @default(PENDING)
+  attempts        Int                @default(0)
+  idempotencyKey  String?            @unique
+  lastAttemptAt   DateTime?          @db.Timestamptz
+  createdAt       DateTime           @default(now()) @db.Timestamptz
+  updatedAt       DateTime           @updatedAt @db.Timestamptz
+  logs            NotificationLog[]
+
+  @@index([status, type, createdAt])
+  @@map("notifications")
+}
+
+model NotificationLog {
+  id             String             @id @default(uuid()) @db.Uuid
+  notificationId String             @db.Uuid
+  notification   Notification       @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  status         NotificationStatus
+  errorMessage   String?            @db.Text
+  metadata       Json?              @db.JsonB
+  createdAt      DateTime           @default(now()) @db.Timestamptz
+
+  @@map("notification_logs")
+}
