@@ -5,9 +5,9 @@ import { notificationQueue } from '@/infrastructure/queue/bullmq';
 import { NotificationType, NotificationStatus } from '@prisma/client';
 
 export const EnqueueNotificationSchema = z.object({
-  type: z.nativeEnum(NotificationType),
+  type: z.enum(Object.values(NotificationType) as [string, ...string[]]),
   recipient: z.string().min(1),
-  payload: z.record(z.any()),
+  payload: z.record(z.string(), z.any()),
   idempotencyKey: z.string().optional().nullable(),
 });
 

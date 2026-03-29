@@ -8,13 +8,13 @@ We focus on building the **Infrastructure Core** first, ensuring that the Redis 
 
 ## Phase 1: Setup
 
-- [ ] T001 Initialize queue directory structure in `src/infrastructure/queue`
-- [ ] T002 Ensure dependencies are available (`bullmq`, `ioredis`, `zod`, `dotenv`)
+- [X] T001 Initialize queue directory structure in `src/infrastructure/queue`
+- [X] T002 Ensure dependencies are available (`bullmq`, `ioredis`, `zod`, `dotenv`)
 
 ## Phase 2: Foundational (Infrastructure Core)
 
-- [ ] T003 [P] Implement Redis connection utility with serverless flags in `src/infrastructure/queue/connection.ts`
-- [ ] T004 [P] Create and configure global BullMQ Queue instance in `src/infrastructure/queue/instance.ts`
+- [X] T003 [P] Implement Redis connection utility with serverless flags in `src/infrastructure/queue/connection.ts`
+- [X] T004 [P] Create and configure global BullMQ Queue instance in `src/infrastructure/queue/instance.ts`
 
 ## Phase 3: User Story 1 (US1) - Type-Safe Job Producer
 
