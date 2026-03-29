@@ -23,9 +23,9 @@ We follow the **MVP First** strategy. Phase 3 (US1) establishes the core ingesti
 **Goal**: Enable system services to enqueue notification requests with durability and idempotency.
 **Test Criteria**: API returns 201 for new requests, record exists in Neon, and job exists in Redis.
 
-- [ ] T007 [P] [US1] Create Notification type definitions in `src/domain/entities/notification.ts`
-- [ ] T010 [US1] Create `EnqueueNotification` use case logic in `src/application/use-cases/enqueue-notification.ts`
-- [ ] T011 [US1] Implement Next.js API route in `src/app/api/notifications/enqueue/route.ts`
+- [X] T007 [P] [US1] Create Notification type definitions in `src/domain/entities/notification.ts`
+- [X] T010 [US1] Create `EnqueueNotification` use case logic in `src/application/use-cases/enqueue-notification.ts`
+- [X] T011 [US1] Implement Next.js API route in `src/app/api/notifications/enqueue/route.ts`
 
 ## Phase 4: User Story 2 (US2) - Audit Trail and Debugging
 
