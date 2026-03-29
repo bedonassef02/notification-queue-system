@@ -32,9 +32,9 @@ We follow the **MVP First** strategy. Phase 3 (US1) establishes the core ingesti
 **Goal**: Track every attempt and allow history retrieval for debugging.
 **Test Criteria**: Every attempt creates a log entry; API returns logs for a specific notification ID.
 
-- [ ] T012 [P] [US2] Create NotificationLog type definitions in `src/domain/entities/notification-log.ts`
-- [ ] T013 [US2] Update data access layer to handle log persistence in `src/infrastructure/database/prisma-repository.ts`
-- [ ] T015 [US2] Implement audit log API route in `src/app/api/notifications/[id]/logs/route.ts`
+- [X] T012 [P] [US2] Create NotificationLog type definitions in `src/domain/entities/notification-log.ts`
+- [X] T013 [US2] Update data access layer to handle log persistence in `src/infrastructure/database/prisma-repository.ts`
+- [X] T015 [US2] Implement audit log API route in `src/app/api/notifications/[id]/logs/route.ts`
 
 ## Phase 5: Core Processing & Providers
 
