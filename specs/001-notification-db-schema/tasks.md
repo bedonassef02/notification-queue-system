@@ -48,8 +48,8 @@ We follow the **MVP First** strategy. Phase 3 (US1) establishes the core ingesti
 
 ## Phase 6: Polish & Coordination
 
-- [ ] T021 Configure npm scripts for worker execution in `package.json`
-- [ ] T022 Update `README.md` with setup and execution instructions
+- [X] T021 Configure npm scripts for worker execution in `package.json`
+- [X] T022 Update `README.md` with setup and execution instructions
 
 ## Dependencies
 
