@@ -3,7 +3,7 @@ import { prisma } from './prisma';
 import { NotificationStatus } from '@/domain/entities/notification';
 
 export class LogRepository {
-  async addLog(notificationId: string, status: NotificationStatus, error?: string, metadata?: any) {
+  async create(notificationId: string, status: NotificationStatus, error?: string, metadata?: any) {
     return prisma.notificationLog.create({
       data: {
         notificationId,
@@ -14,7 +14,7 @@ export class LogRepository {
     });
   }
 
-  async getLogsByNotificationId(notificationId: string) {
+  async findByNotificationId(notificationId: string) {
     return prisma.notificationLog.findMany({
       where: { notificationId },
       orderBy: { createdAt: 'desc' },

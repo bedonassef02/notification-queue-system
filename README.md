@@ -70,6 +70,10 @@ npm run worker:start
 
 ## Project Structure
 - `src/domain`: Entities and core business rules.
-- `src/application`: Use cases for enqueuing and status management.
-- `src/infrastructure`: Implementations for Prisma, BullMQ, and External Providers.
-- `src/workers`: Standalone worker processing logic and entry point.
+- `src/application/services`: Orchestration Logic (NotificationService).
+- `src/infrastructure/database`: specialized repositories (Notification, Log).
+- `src/infrastructure/providers`: Strategy-based notification channel implementations (ZeptoMail, Twilio, OneSignal).
+- `src/infrastructure/queue`: IORedis/BullMQ singleton infrastructure.
+- `src/shared/validators`: Centralized Zod schemas.
+- `src/workers`: Background job processors.
+- `src/app/api`: Thin controllers for handling HTTP requests.

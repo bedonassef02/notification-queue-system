@@ -31,17 +31,12 @@ We focus on building the **Infrastructure Core** first, ensuring that the Redis 
 
 - [X] T007 Implement example API route for job creation in `src/app/api/example-job/route.ts`
 
-## Final Phase: Documentation
+## Phase 5: Refactoring & Hardening (Completed)
 
-- [X] T008 Add technical usage guide for developers in `src/infrastructure/queue/README.md`
+**Goal**: Elevate the project to enterprise-grade with Clean Architecture patterns.
 
-## Dependencies
-
-- Phase 2 depends on Phase 1 setup.
-- Phase 3 depends on Phase 2 infrastructure.
-- Phase 4 depends on Phase 3 producer availability.
-
-## Parallel Execution Examples
-
-- T003, T004 (Foundational setup)
-- T005, T008 (Schema and documentation can be done while functional code is implemented locally)
+- [X] T009 [P] Centralize Zod schemas into `src/shared/validators/`
+- [X] T010 [P] Implement specialized `NotificationRepository` and `LogRepository`
+- [X] T011 [P] Create `NotificationService` as a centralized controller layer
+- [X] T012 [P] Refactor API routes to be thin controllers calling the service layer
+- [X] T013 [P] Synchronize all documentation (`DEVELOPER_GUIDE`, `PROJECT_OVERVIEW`)

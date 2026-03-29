@@ -4,13 +4,19 @@ import { NotificationType, NotificationStatus } from '@/domain/entities/notifica
 import { Notification as PrismaNotification } from '@prisma/client';
 
 export class NotificationRepository {
-  async getNotificationById(id: string) {
+  async findById(id: string) {
     return prisma.notification.findUnique({
       where: { id },
     });
   }
 
-  async updateNotificationStatus(id: string, status: NotificationStatus, attemptsCount?: number) {
+  async findAll() {
+    return prisma.notification.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async updateStatus(id: string, status: NotificationStatus, attemptsCount?: number) {
     return prisma.notification.update({
       where: { id },
       data: {
@@ -21,7 +27,7 @@ export class NotificationRepository {
     });
   }
 
-  async upsertNotification(input: {
+  async upsert(input: {
     type: NotificationType;
     recipient: string;
     payload: any;

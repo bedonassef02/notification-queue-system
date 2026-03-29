@@ -20,7 +20,7 @@ export class NotificationProcessor {
     console.log(`Processing notification: ${notificationId}`);
     
     // 1. Fetch notification
-    const notification = await this.notificationRepository.getNotificationById(notificationId);
+    const notification = await this.notificationRepository.findById(notificationId);
     if (!notification) {
       throw new Error(`Notification ${notificationId} not found`);
     }
@@ -30,7 +30,7 @@ export class NotificationProcessor {
 
     try {
       // 2. Update status to PROCESSING
-      await this.notificationRepository.updateNotificationStatus(notificationId, NotificationStatus.PROCESSING);
+      await this.notificationRepository.updateStatus(notificationId, NotificationStatus.PROCESSING);
       
       const provider = NotificationProviderFactory.getProvider(notification.type);
       if (!provider) {
@@ -42,13 +42,13 @@ export class NotificationProcessor {
 
       if (response.success) {
         // 4a. Update to SENT
-        await this.notificationRepository.updateNotificationStatus(notificationId, NotificationStatus.SENT, 1);
-        await this.logRepository.addLog(notificationId, NotificationStatus.SENT, undefined, response.metadata);
+        await this.notificationRepository.updateStatus(notificationId, NotificationStatus.SENT, 1);
+        await this.logRepository.create(notificationId, NotificationStatus.SENT, undefined, response.metadata);
         console.log(`Notification ${notificationId} sent successfully via ${notification.type}`);
       } else {
         // 4b. Update to FAILED and log error
-        await this.notificationRepository.updateNotificationStatus(notificationId, NotificationStatus.FAILED, 1);
-        await this.logRepository.addLog(notificationId, NotificationStatus.FAILED, response.error, response.metadata);
+        await this.notificationRepository.updateStatus(notificationId, NotificationStatus.FAILED, 1);
+        await this.logRepository.create(notificationId, NotificationStatus.FAILED, response.error, response.metadata);
         throw new Error(response.error || 'Unknown provider error');
       }
     } catch (err: any) {

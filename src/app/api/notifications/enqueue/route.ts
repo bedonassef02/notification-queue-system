@@ -1,17 +1,13 @@
-// src/app/api/notifications/enqueue/route.ts
-import { NextResponse } from 'next/server';
-import { EnqueueNotificationUseCase } from '@/application/use-cases/enqueue-notification';
-import { ZodError } from 'zod';
-import { NotificationRepository } from '@/infrastructure/database/notification-repository';
+import { NotificationService } from '@/application/services/notification-service';
 import { ApiResponse } from '@/shared/utils/api-response';
+import { ZodError } from 'zod';
 
-const notificationRepository = new NotificationRepository();
-const enqueueNotificationUseCase = new EnqueueNotificationUseCase(notificationRepository);
+const notificationService = new NotificationService();
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const result = await enqueueNotificationUseCase.execute(body);
+    const result = await notificationService.create(body);
 
     return ApiResponse.success(
       { id: result.id, status: result.status },

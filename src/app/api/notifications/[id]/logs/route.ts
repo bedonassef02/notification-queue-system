@@ -1,11 +1,7 @@
-// src/app/api/notifications/[id]/logs/route.ts
-import { NextResponse } from 'next/server';
-import { NotificationRepository } from '@/infrastructure/database/notification-repository';
-import { LogRepository } from '@/infrastructure/database/log-repository';
+import { NotificationService } from '@/application/services/notification-service';
 import { ApiResponse } from '@/shared/utils/api-response';
 
-const notificationRepository = new NotificationRepository();
-const logRepository = new LogRepository();
+const notificationService = new NotificationService();
 
 export async function GET(
   req: Request,
@@ -14,15 +10,13 @@ export async function GET(
   try {
     const notificationId = params.id;
 
-    // 1. Check if the notification exists
-    const notification = await notificationRepository.getNotificationById(notificationId);
-
+    // 1. Fetch notification and logs via Service
+    const notification = await notificationService.findById(notificationId);
     if (!notification) {
       return ApiResponse.error('Notification not found', 404);
     }
-
-    // 2. Fetch logs
-    const logs = await logRepository.getLogsByNotificationId(notificationId);
+    
+    const logs = await notificationService.getLogs(notificationId);
 
     return ApiResponse.success({
       id: notification.id,
