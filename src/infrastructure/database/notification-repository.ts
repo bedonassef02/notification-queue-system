@@ -1,30 +1,12 @@
-// src/infrastructure/database/prisma-repository.ts
+// src/infrastructure/database/notification-repository.ts
 import { prisma } from './prisma';
-import { NotificationStatus, NotificationType } from '@prisma/client';
+import { NotificationType, NotificationStatus } from '@/domain/entities/notification';
+import { Notification as PrismaNotification } from '@prisma/client';
 
-export class PrismaRepository {
+export class NotificationRepository {
   async getNotificationById(id: string) {
     return prisma.notification.findUnique({
       where: { id },
-      include: { logs: true },
-    });
-  }
-
-  async getLogsByNotificationId(notificationId: string) {
-    return prisma.notificationLog.findMany({
-      where: { notificationId },
-      orderBy: { createdAt: 'desc' },
-    });
-  }
-
-  async addLog(notificationId: string, status: NotificationStatus, errorMessage?: string, metadata?: any) {
-    return prisma.notificationLog.create({
-      data: {
-        notificationId,
-        status,
-        errorMessage,
-        metadata,
-      },
     });
   }
 
@@ -32,7 +14,7 @@ export class PrismaRepository {
     return prisma.notification.update({
       where: { id },
       data: {
-        status,
+        status: status as any,
         attempts: attemptsCount !== undefined ? { increment: attemptsCount } : undefined,
         lastAttemptAt: new Date(),
       },
@@ -52,11 +34,11 @@ export class PrismaRepository {
       },
       update: {},
       create: {
-        type: input.type,
+        type: input.type as any,
         recipient: input.recipient,
         payload: input.payload,
         idempotencyKey: input.idempotencyKey,
-        status: input.status,
+        status: input.status as any,
       },
     });
   }

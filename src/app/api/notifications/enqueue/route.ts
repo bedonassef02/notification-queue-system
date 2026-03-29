@@ -2,11 +2,11 @@
 import { NextResponse } from 'next/server';
 import { EnqueueNotificationUseCase } from '@/application/use-cases/enqueue-notification';
 import { ZodError } from 'zod';
-import { PrismaRepository } from '@/infrastructure/database/prisma-repository';
+import { NotificationRepository } from '@/infrastructure/database/notification-repository';
 import { ApiResponse } from '@/shared/utils/api-response';
 
-const prismaRepository = new PrismaRepository();
-const enqueueNotificationUseCase = new EnqueueNotificationUseCase(prismaRepository);
+const notificationRepository = new NotificationRepository();
+const enqueueNotificationUseCase = new EnqueueNotificationUseCase(notificationRepository);
 
 export async function POST(req: Request) {
   try {

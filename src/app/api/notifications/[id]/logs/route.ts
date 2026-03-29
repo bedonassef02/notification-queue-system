@@ -1,9 +1,11 @@
 // src/app/api/notifications/[id]/logs/route.ts
 import { NextResponse } from 'next/server';
-import { PrismaRepository } from '@/infrastructure/database/prisma-repository';
+import { NotificationRepository } from '@/infrastructure/database/notification-repository';
+import { LogRepository } from '@/infrastructure/database/log-repository';
 import { ApiResponse } from '@/shared/utils/api-response';
 
-const prismaRepository = new PrismaRepository();
+const notificationRepository = new NotificationRepository();
+const logRepository = new LogRepository();
 
 export async function GET(
   req: Request,
@@ -13,14 +15,14 @@ export async function GET(
     const notificationId = params.id;
 
     // 1. Check if the notification exists
-    const notification = await prismaRepository.getNotificationById(notificationId);
+    const notification = await notificationRepository.getNotificationById(notificationId);
 
     if (!notification) {
       return ApiResponse.error('Notification not found', 404);
     }
 
     // 2. Fetch logs
-    const logs = await prismaRepository.getLogsByNotificationId(notificationId);
+    const logs = await logRepository.getLogsByNotificationId(notificationId);
 
     return ApiResponse.success({
       id: notification.id,

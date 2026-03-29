@@ -1,6 +1,6 @@
 // src/application/use-cases/enqueue-notification.ts
 import { z } from 'zod';
-import { PrismaRepository } from '@/infrastructure/database/prisma-repository';
+import { NotificationRepository } from '@/infrastructure/database/notification-repository';
 import { enqueueJob } from '@/infrastructure/queue/producer';
 import { NotificationType, NotificationStatus } from '@/domain/entities/notification';
 
@@ -14,7 +14,7 @@ export const EnqueueNotificationSchema = z.object({
 export type EnqueueNotificationInput = z.infer<typeof EnqueueNotificationSchema>;
 
 export class EnqueueNotificationUseCase {
-  constructor(private repository: PrismaRepository) {}
+  constructor(private repository: NotificationRepository) {}
 
   async execute(input: EnqueueNotificationInput) {
     const validatedInput = EnqueueNotificationSchema.parse(input);
