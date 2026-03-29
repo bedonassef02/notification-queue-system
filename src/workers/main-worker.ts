@@ -1,6 +1,7 @@
 // src/workers/main-worker.ts
 import { Worker } from 'bullmq';
-import { connection, NOTIFICATION_QUEUE_NAME } from '@/infrastructure/queue/bullmq';
+import { getConnection } from '@/infrastructure/queue/connection';
+import { JOB_QUEUE_NAME } from '@/infrastructure/queue/instance';
 import { NotificationProcessor } from './processor';
 
 const processor = new NotificationProcessor();
@@ -8,12 +9,12 @@ const processor = new NotificationProcessor();
 console.log('Starting Notification Worker...');
 
 const worker = new Worker(
-  NOTIFICATION_QUEUE_NAME,
+  JOB_QUEUE_NAME,
   async (job) => {
     await processor.process(job);
   },
   { 
-    connection,
+    connection: getConnection(),
     lockDuration: 60000, // 60s
     concurrency: 5,     // process 5 jobs at a time
   }
