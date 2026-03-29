@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import { enqueueJob } from '@/infrastructure/queue/producer';
 import { ZodError } from 'zod';
+import { ApiResponse } from '@/shared/utils/api-response';
 
 /**
  * Example endpoint to submit a background job.
@@ -10,7 +11,7 @@ import { ZodError } from 'zod';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    
+
     // Demonstrate ingestion
     const result = await enqueueJob('process-transaction', {
       id: body.transactionId || `txn-${Date.now()}`, // Business key for idempotency
@@ -20,27 +21,20 @@ export async function POST(req: Request) {
         currency: body.currency || 'USD',
       },
     });
-    
-    return NextResponse.json(
-      { 
-        jobId: result.id, 
-        message: 'Successfully enqueued task in BullMQ' 
-      },
-      { status: 201 }
+
+    return ApiResponse.success(
+      { jobId: result.id },
+      201,
+      'Successfully enqueued task in BullMQ'
     );
   } catch (err: any) {
-    console.error('[API Error] Enqueue Job Failed:', err);
-
     if (err instanceof ZodError) {
-      return NextResponse.json(
-        { error: 'Input Validation Failed', info: err.flatten().fieldErrors },
-        { status: 400 }
-      );
+      return ApiResponse.validationError(err);
     }
-    
-    return NextResponse.json(
-      { error: 'Queue Submission Error', message: err.message },
-      { status: 500 }
+
+    return ApiResponse.error(
+      err.message || 'Queue Submission Error',
+      500
     );
   }
 }

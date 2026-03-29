@@ -2,39 +2,30 @@
 import { NextResponse } from 'next/server';
 import { EnqueueNotificationUseCase } from '@/application/use-cases/enqueue-notification';
 import { ZodError } from 'zod';
+import { PrismaRepository } from '@/infrastructure/database/prisma-repository';
+import { ApiResponse } from '@/shared/utils/api-response';
 
-const enqueueNotificationUseCase = new EnqueueNotificationUseCase();
+const prismaRepository = new PrismaRepository();
+const enqueueNotificationUseCase = new EnqueueNotificationUseCase(prismaRepository);
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    
     const result = await enqueueNotificationUseCase.execute(body);
-    
-    return NextResponse.json(
-      { 
-        id: result.id, 
-        status: result.status, 
-        message: 'Notification enqueued successfully' 
-      },
-      { status: 201 }
+
+    return ApiResponse.success(
+      { id: result.id, status: result.status },
+      201,
+      'Notification enqueued successfully'
     );
   } catch (error) {
-    console.error('Enqueue API Error:', error);
-    
     if (error instanceof ZodError) {
-      return NextResponse.json(
-        { 
-          error: 'Validation Error', 
-          details: error.flatten().fieldErrors 
-        },
-        { status: 400 }
-      );
+      return ApiResponse.validationError(error);
     }
-    
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 }
+
+    return ApiResponse.error(
+      (error as Error).message || 'Internal Server Error',
+      500
     );
   }
 }

@@ -1,28 +1,14 @@
 // src/workers/processor.ts
 import { Job } from 'bullmq';
 import { PrismaRepository } from '@/infrastructure/database/prisma-repository';
-import { ZeptoMailProvider } from '@/infrastructure/providers/email-zeptomail';
-import { TwilioProvider } from '@/infrastructure/providers/sms-twilio';
-import { OneSignalProvider } from '@/infrastructure/providers/push-onesignal';
-import { INotificationProvider } from '@/domain/repositories/notification-provider';
-import { NotificationStatus, NotificationType } from '@prisma/client';
+import { NotificationStatus } from '@/domain/entities/notification';
+import { NotificationProviderFactory } from '@/infrastructure/providers/factory';
 
 export class NotificationProcessor {
   private prismaRepository: PrismaRepository;
-  private providers: Map<NotificationType, INotificationProvider>;
 
   constructor() {
     this.prismaRepository = new PrismaRepository();
-    this.providers = new Map();
-    
-    // Register providers
-    const emailProvider = new ZeptoMailProvider();
-    const smsProvider = new TwilioProvider();
-    const pushProvider = new OneSignalProvider();
-    
-    this.providers.set(NotificationType.EMAIL, emailProvider);
-    this.providers.set(NotificationType.SMS, smsProvider);
-    this.providers.set(NotificationType.PUSH, pushProvider);
   }
 
   async process(job: Job) {
@@ -43,7 +29,7 @@ export class NotificationProcessor {
       // 2. Update status to PROCESSING
       await this.prismaRepository.updateNotificationStatus(notificationId, NotificationStatus.PROCESSING);
       
-      const provider = this.providers.get(notification.type);
+      const provider = NotificationProviderFactory.getProvider(notification.type);
       if (!provider) {
         throw new Error(`No provider found for type: ${notification.type}`);
       }

@@ -1,15 +1,26 @@
-// src/domain/entities/notification.ts
-import { NotificationStatus, NotificationType } from '@prisma/client';
+// src/domain/entities/notification.ts (Refactored to types/constants)
+
+export enum NotificationType {
+  EMAIL = 'EMAIL',
+  SMS = 'SMS',
+  PUSH = 'PUSH',
+}
+
+export enum NotificationStatus {
+  PENDING = 'PENDING',
+  PROCESSING = 'PROCESSING',
+  SENT = 'SENT',
+  FAILED = 'FAILED',
+}
 
 export interface Notification {
   id: string;
   type: NotificationType;
   recipient: string;
-  payload: any;
+  payload: Record<string, any>;
   status: NotificationStatus;
-  attempts: number;
   idempotencyKey?: string | null;
+  attempts: number;
   lastAttemptAt?: Date | null;
   createdAt: Date;
-  updatedAt: Date;
 }
