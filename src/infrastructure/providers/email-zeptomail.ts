@@ -1,24 +1,29 @@
 // src/infrastructure/providers/email-zeptomail.ts
 import { INotificationProvider, ProviderResponse } from '@/domain/repositories/notification-provider';
 import { NotificationType } from '@/domain/entities/notification';
+import { EmailPayload } from '@/domain/entities/payloads';
+import { AppConfig, AppConfigType } from '@/shared/utils/config';
+import { InfrastructureError } from '@/shared/utils/application-error';
 import { SendMailClient } from 'zeptomail';
 
 export class ZeptoMailProvider implements INotificationProvider {
   type = NotificationType.EMAIL;
   private client: SendMailClient;
+  private config: AppConfigType;
 
-  constructor() {
+  constructor(config: AppConfigType = AppConfig) {
+    this.config = config;
     this.client = new SendMailClient({
       url: 'https://api.zeptomail.com/',
-      token: process.env.ZEPTOMAIL_API_KEY || '',
+      token: this.config.ZEPTOMAIL_API_KEY,
     });
   }
 
-  async send(recipient: string, payload: any): Promise<ProviderResponse> {
+  async send(recipient: string, payload: EmailPayload): Promise<ProviderResponse> {
     try {
       const response: any = await this.client.sendMail({
         from: {
-          address: process.env.ZEPTOMAIL_SENDER_EMAIL || '',
+          address: this.config.ZEPTOMAIL_SENDER_EMAIL,
           name: 'Notifications',
         },
         to: [{ email_address: { address: recipient, name: recipient } }],
@@ -32,11 +37,7 @@ export class ZeptoMailProvider implements INotificationProvider {
         metadata: response,
       };
     } catch (error: any) {
-      return {
-        success: false,
-        error: error.message,
-        metadata: error,
-      };
+      throw new InfrastructureError(`ZeptoMail delivery failed: ${error.message}`, error);
     }
   }
 }

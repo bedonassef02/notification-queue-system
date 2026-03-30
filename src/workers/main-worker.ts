@@ -4,6 +4,7 @@ import { getConnection } from '@/infrastructure/queue/connection';
 import { QUEUE_NAMES } from '@/infrastructure/queue/instance';
 import { NotificationProcessor } from './processor';
 import { NotificationType } from '@/domain/entities/notification';
+import { AppConfig } from '@/shared/utils/config';
 
 const processor = new NotificationProcessor();
 
@@ -13,19 +14,19 @@ const processor = new NotificationProcessor();
  */
 const WORKER_CONFIGS: Record<NotificationType, { concurrency: number; maxJobs: number; duration: number }> = {
   [NotificationType.EMAIL]: {
-    concurrency: Number(process.env.EMAIL_CONCURRENCY) || 5,
-    maxJobs: Number(process.env.EMAIL_MAX_LIMIT) || 10,
-    duration: 1000, // 10 emails per second
+    concurrency: AppConfig.EMAIL_CONCURRENCY,
+    maxJobs: AppConfig.EMAIL_MAX_LIMIT,
+    duration: 1000,
   },
   [NotificationType.SMS]: {
-    concurrency: Number(process.env.SMS_CONCURRENCY) || 2,
-    maxJobs: Number(process.env.SMS_MAX_LIMIT) || 2,
-    duration: 1000, // 2 SMS per second (often limited by carrier)
+    concurrency: AppConfig.SMS_CONCURRENCY,
+    maxJobs: AppConfig.SMS_MAX_LIMIT,
+    duration: 1000,
   },
   [NotificationType.PUSH]: {
-    concurrency: Number(process.env.PUSH_CONCURRENCY) || 10,
-    maxJobs: Number(process.env.PUSH_MAX_LIMIT) || 50,
-    duration: 1000, // 50 push per second
+    concurrency: AppConfig.PUSH_CONCURRENCY,
+    maxJobs: AppConfig.PUSH_MAX_LIMIT,
+    duration: 1000,
   },
 };
 
@@ -36,13 +37,13 @@ const workers: Worker[] = [];
 // Start a separate worker for each provider queue
 Object.entries(QUEUE_NAMES).forEach(([type, queueName]) => {
   const config = WORKER_CONFIGS[type as NotificationType];
-  
+
   const worker = new Worker(
     queueName,
     async (job: Job) => {
       await processor.process(job);
     },
-    { 
+    {
       connection: getConnection(),
       lockDuration: 60000, // 60s
       concurrency: config.concurrency,
@@ -69,9 +70,9 @@ Object.entries(QUEUE_NAMES).forEach(([type, queueName]) => {
  * Graceful shutdown for all workers
  */
 const shutdown = async (signal: string) => {
-    console.log(`${signal} received. Shutting down all workers gracefully...`);
-    await Promise.all(workers.map(w => w.close()));
-    process.exit(0);
+  console.log(`${signal} received. Shutting down all workers gracefully...`);
+  await Promise.all(workers.map(w => w.close()));
+  process.exit(0);
 };
 
 process.on('SIGTERM', () => shutdown('SIGTERM'));

@@ -1,10 +1,15 @@
 import { NotificationService } from '@/application/services/notification-service';
 import { ApiResponse } from '@/shared/utils/api-response';
+import { AppError, ValidationError } from '@/shared/utils/application-error';
 import { ZodError } from 'zod';
 
-const notificationService = new NotificationService();
-
+/**
+ * POST /api/notifications/enqueue
+ * Standard ingestion point for all notification types.
+ */
 export async function POST(req: Request) {
+  const notificationService = new NotificationService();
+
   try {
     const body = await req.json();
     const result = await notificationService.create(body);
@@ -16,12 +21,15 @@ export async function POST(req: Request) {
     );
   } catch (error) {
     if (error instanceof ZodError) {
-      return ApiResponse.validationError(error);
+      const valError = ValidationError.fromZod(error);
+      return ApiResponse.error(valError.message, valError.statusCode, valError.details);
     }
 
-    return ApiResponse.error(
-      (error as Error).message || 'Internal Server Error',
-      500
-    );
+    if (error instanceof AppError) {
+      return ApiResponse.error(error.message, error.statusCode, error.details);
+    }
+
+    const message = error instanceof Error ? error.message : 'Internal Server Error';
+    return ApiResponse.error(message, 500);
   }
 }

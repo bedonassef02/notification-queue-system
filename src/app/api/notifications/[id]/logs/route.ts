@@ -1,23 +1,28 @@
 import { NotificationService } from '@/application/services/notification-service';
 import { ApiResponse } from '@/shared/utils/api-response';
+import { AppError, NotFoundError } from '@/shared/utils/application-error';
 import { NextRequest } from 'next/server';
 
-const notificationService = new NotificationService();
-
+/**
+ * GET /api/notifications/[id]/logs
+ * Retrieves full audit log history for a specific notification delivery.
+ */
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
+  const notificationService = new NotificationService();
+
   try {
     const { id: notificationId } = await context.params;
 
     // 1. Fetch notification and logs via Service
     const notification = await notificationService.findById(notificationId);
     if (!notification) {
-      return ApiResponse.error('Notification not found', 404);
+      throw new NotFoundError('Notification', notificationId);
     }
     
-    // 2. Fetch full delivery history (now including attemptNumber)
+    // 2. Fetch full delivery history
     const logs = await notificationService.getLogs(notificationId);
 
     return ApiResponse.success({
@@ -28,9 +33,11 @@ export async function GET(
       logs: logs
     });
   } catch (error) {
-    return ApiResponse.error(
-      (error as Error).message || 'Internal Server Error',
-      500
-    );
+    if (error instanceof AppError) {
+      return ApiResponse.error(error.message, error.statusCode, error.details);
+    }
+
+    const message = error instanceof Error ? error.message : 'Internal Server Error';
+    return ApiResponse.error(message, 500);
   }
 }

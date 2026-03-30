@@ -1,29 +1,36 @@
 // src/infrastructure/providers/push-onesignal.ts
 import { INotificationProvider, ProviderResponse } from '@/domain/repositories/notification-provider';
 import { NotificationType } from '@/domain/entities/notification';
+import { PushPayload } from '@/domain/entities/payloads';
+import { AppConfig, AppConfigType } from '@/shared/utils/config';
+import { InfrastructureError } from '@/shared/utils/application-error';
 import * as OneSignal from 'onesignal-node';
 
 export class OneSignalProvider implements INotificationProvider {
   type = NotificationType.PUSH;
   private client: OneSignal.Client;
+  private config: AppConfigType;
 
-  constructor() {
+  constructor(config: AppConfigType = AppConfig) {
+    this.config = config;
     this.client = new OneSignal.Client(
-      process.env.ONESIGNAL_APP_ID || '',
-      process.env.ONESIGNAL_REST_API_KEY || ''
+      this.config.ONESIGNAL_APP_ID,
+      this.config.ONESIGNAL_REST_API_KEY
     );
   }
 
-  async send(recipient: string, payload: any): Promise<ProviderResponse> {
+  async send(recipient: string, payload: PushPayload): Promise<ProviderResponse> {
     try {
       const response: any = await this.client.createNotification({
         contents: {
-          en: payload.message || payload.body || '',
+          en: payload.body || '',
         },
-        include_player_ids: [recipient], // assuming recipient is a push token
+        include_player_ids: [recipient],
         headings: {
           en: payload.title || 'New Notification',
         },
+        big_picture: payload.imageUrl,
+        data: payload.data,
       });
 
       return {
@@ -32,11 +39,7 @@ export class OneSignalProvider implements INotificationProvider {
         metadata: response,
       };
     } catch (error: any) {
-      return {
-        success: false,
-        error: error.message,
-        metadata: error,
-      };
+      throw new InfrastructureError(`OneSignal delivery failed: ${error.message}`, error);
     }
   }
 }

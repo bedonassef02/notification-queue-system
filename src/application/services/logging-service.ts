@@ -9,8 +9,8 @@ import { NotificationStatus } from '@/domain/entities/notification';
 export class LoggingService {
   private logRepository: LogRepository;
 
-  constructor() {
-    this.logRepository = new LogRepository();
+  constructor(logRepository: LogRepository = new LogRepository()) {
+    this.logRepository = logRepository;
   }
 
   /**

@@ -35,7 +35,7 @@ export class NotificationRepository {
     priority?: number;
     scheduledAt?: Date | null;
     status: NotificationStatus;
-  }) {
+  }): Promise<PrismaNotification> {
     return prisma.notification.upsert({
       where: {
         idempotencyKey: input.idempotencyKey || 'IDEM_KEY_NOT_PROVIDED_' + Date.now(),
@@ -46,8 +46,8 @@ export class NotificationRepository {
         recipient: input.recipient,
         payload: input.payload,
         idempotencyKey: input.idempotencyKey,
-        priority: input.priority || 0,
-        scheduledAt: input.scheduledAt,
+        priority: (input.priority || 0) as any,
+        scheduledAt: input.scheduledAt as any,
         status: input.status as any,
       },
     });

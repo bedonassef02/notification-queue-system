@@ -1,6 +1,6 @@
-// src/app/api/notifications/dlq/route.ts
-import { NextResponse } from 'next/server';
 import { NotificationService } from '@/application/services/notification-service';
+import { ApiResponse } from '@/shared/utils/api-response';
+import { AppError } from '@/shared/utils/application-error';
 
 /**
  * GET /api/notifications/dlq
@@ -8,20 +8,21 @@ import { NotificationService } from '@/application/services/notification-service
  * This acts as the inspection endpoint for the Dead Letter Queue.
  */
 export async function GET() {
+  const service = new NotificationService();
+
   try {
-    const service = new NotificationService();
     const deadLetters = await service.getDeadLetters();
 
-    return NextResponse.json({
-      success: true,
+    return ApiResponse.success({
       count: deadLetters.length,
       data: deadLetters,
     });
-  } catch (error: any) {
-    console.error('Failed to fetch DLQ:', error);
-    return NextResponse.json(
-      { success: false, error: 'Internal Server Error' },
-      { status: 500 }
-    );
+  } catch (error) {
+    if (error instanceof AppError) {
+      return ApiResponse.error(error.message, error.statusCode, error.details);
+    }
+
+    const message = error instanceof Error ? error.message : 'Internal Server Error';
+    return ApiResponse.error(message, 500);
   }
 }

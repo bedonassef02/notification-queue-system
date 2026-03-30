@@ -12,13 +12,10 @@ import { LoggingService } from './logging-service';
  */
 
 export class NotificationService {
-  private notificationRepository: NotificationRepository;
-  private loggingService: LoggingService;
-
-  constructor() {
-    this.notificationRepository = new NotificationRepository();
-    this.loggingService = new LoggingService();
-  }
+  constructor(
+    private notificationRepository: NotificationRepository = new NotificationRepository(),
+    private loggingService: LoggingService = new LoggingService()
+  ) {}
 
   /**
    * create - Validates and enqueues a new notification.
