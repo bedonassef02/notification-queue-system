@@ -3,11 +3,12 @@ import { prisma } from './prisma';
 import { NotificationStatus } from '@/domain/entities/notification';
 
 export class LogRepository {
-  async create(notificationId: string, status: NotificationStatus, error?: string, metadata?: any) {
+  async create(notificationId: string, status: NotificationStatus, attemptNumber: number, error?: string, metadata?: any) {
     return prisma.notificationLog.create({
       data: {
         notificationId,
         status: status as any,
+        attemptNumber,
         errorMessage: error,
         metadata,
       },

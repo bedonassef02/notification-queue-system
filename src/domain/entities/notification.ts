@@ -11,6 +11,7 @@ export enum NotificationStatus {
   PROCESSING = 'PROCESSING',
   SENT = 'SENT',
   FAILED = 'FAILED',
+  PERMANENT_FAILURE = 'PERMANENT_FAILURE',
 }
 
 export interface Notification {

@@ -45,6 +45,7 @@ model NotificationLog {
   notificationId String             @db.Uuid
   notification   Notification       @relation(fields: [notificationId], references: [id], onDelete: Cascade)
   status         NotificationStatus
+  attemptNumber  Int                @default(1)
   errorMessage   String?            @db.Text
   metadata       Json?              @db.JsonB
   createdAt      DateTime           @default(now()) @db.Timestamptz

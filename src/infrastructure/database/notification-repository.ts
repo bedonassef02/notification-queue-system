@@ -16,7 +16,7 @@ export class NotificationRepository {
     });
   }
 
-  async updateStatus(id: string, status: NotificationStatus, attemptsCount?: number) {
+  async updateStatus(id: string, status: NotificationStatus, attemptsCount?: number): Promise<PrismaNotification> {
     return prisma.notification.update({
       where: { id },
       data: {

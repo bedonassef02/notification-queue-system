@@ -17,6 +17,7 @@ export async function GET(
       return ApiResponse.error('Notification not found', 404);
     }
     
+    // 2. Fetch full delivery history (now including attemptNumber)
     const logs = await notificationService.getLogs(notificationId);
 
     return ApiResponse.success({

@@ -4,18 +4,20 @@ import { LogRepository } from '@/infrastructure/database/log-repository';
 import { enqueueJob } from '@/infrastructure/queue/producer';
 import { NotificationType, NotificationStatus } from '@/domain/entities/notification';
 import { EnqueueNotificationSchema, EnqueueNotificationInput } from '@/shared/validators/notification-validator';
+import { LoggingService } from './logging-service';
 
 /**
  * Notification Service (Controller Pattern)
  * Orchestrates all notification-related data logic.
  */
+
 export class NotificationService {
   private notificationRepository: NotificationRepository;
-  private logRepository: LogRepository;
+  private loggingService: LoggingService;
 
   constructor() {
     this.notificationRepository = new NotificationRepository();
-    this.logRepository = new LogRepository();
+    this.loggingService = new LoggingService();
   }
 
   /**
@@ -65,6 +67,6 @@ export class NotificationService {
    * getLogs - Retrieves entire audit log history for a notification delivery.
    */
   async getLogs(notificationId: string) {
-    return this.logRepository.findByNotificationId(notificationId);
+    return this.loggingService.getHistory(notificationId);
   }
 }
