@@ -5,7 +5,7 @@ This directory manages the core **Producer** logic for background jobs using **B
 ## Architecture Components
 
 - **`connection.ts`**: A singleton IORedis instance optimized for serverless environments. It uses the `rediss://` protocol for TLS/SSL encryption required by Upstash.
-- **`instance.ts`**: The main `Queue` definition for the `main-job-queue`. It defines global default retry strategies (3 attempts with exponential backoff).
+- **`instance.ts`**: The typed `Queue` definitions for provider-specific queues (`EMAIL_QUEUE`, `SMS_QUEUE`, `PUSH_QUEUE`). It defines global default retry strategies (3 attempts with exponential backoff).
 - **`producer.ts`**: The type-safe interface for adding jobs to the queue.
 
 ## Enqueuing a Job

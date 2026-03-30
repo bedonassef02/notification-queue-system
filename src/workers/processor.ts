@@ -39,7 +39,8 @@ export class NotificationProcessor {
 
     try {
       // 2. Update status to PROCESSING (internal state)
-      await this.notificationRepository.updateStatus(notificationId, NotificationStatus.PROCESSING);
+      const updated = await this.notificationRepository.updateStatus(notificationId, NotificationStatus.PROCESSING);
+      await this.loggingService.logAttempt(notificationId, NotificationStatus.PROCESSING, updated.attempts);
       
       const provider = NotificationProviderFactory.getProvider(notification.type as unknown as NotificationType);
       if (!provider) {

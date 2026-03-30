@@ -53,9 +53,17 @@ src/
 
 ---
 
-## 5. Reliability & Security
-- **Idempotency**: business keys map to BullMQ `jobId` to avoid double-sends.
-- **Observability**: Every send attempt is recorded in the `LogRepository`.
-- **Validation**: Strict schema enforcement at the service entry point.
-l provider metadata for troubleshooting.
+## 5. Advanced Queue Features
+- **Multi-Queue Routing**: Optimized isolation with specialized queues for `EMAIL`, `SMS`, and `PUSH`.
+- **Rate Limiting**: Provider-specific thresholds (e.g., 2 SMS/sec) to prevent API throttling.
+- **Scheduling**: Support for delayed delivery via `scheduledAt` timestamps.
+- **Priority**: Native BullMQ priority support for time-critical notifications (e.g., 2FA).
+- **Dead Letter Queue (DLQ)**: Terminal failures are captured as `PERMANENT_FAILURE` and accessible via `GET /api/notifications/dlq`.
+
+---
+
+## 6. Reliability & Security
+- **Idempotency**: Business keys map to BullMQ `jobId` to avoid double-sends.
+- **Observability**: Detailed audit logs for every delivery attempt, including provider-specific metadata.
+- **Validation**: Strict schema enforcement at the service entry point using Zod.
 - **Decoupling**: Adding a new communication channel (like WhatsApp or Slack) only requires adding one file in `src/infrastructure/providers`.

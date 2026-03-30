@@ -43,6 +43,12 @@ export class NotificationService {
     });
 
     // 3. Enqueue to Provider-Specific Queue
+    // If the record exists and status is already SENT, we skip completely (Idempotency)
+    if (notification.status === NotificationStatus.SENT) {
+      console.log(`[Idempotency] Notification ${notification.id} already SENT. Skipping enqueue.`);
+      return notification;
+    }
+
     if (notification.status === NotificationStatus.PENDING) {
       const delay = scheduledAt 
         ? Math.max(0, scheduledAt.getTime() - Date.now()) 
