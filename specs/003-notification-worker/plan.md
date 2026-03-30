@@ -6,6 +6,7 @@
 **Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/plan-template.md` for the execution workflow.
 
 ## Summary
+
 Building a robust, standalone notification worker for BullMQ that processes multi-channel delivery (Email, SMS, Push) with full audit logging and exactly-once delivery guarantees.
 
 ## Technical Context
@@ -22,7 +23,7 @@ Building a robust, standalone notification worker for BullMQ that processes mult
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - **Principle I: Queue-First**: ✅ (Validated: Service layer enqueues before process)
 - **Principle II: Provider Abstraction**: ✅ (Validated: `INotificationProvider` interface ready)

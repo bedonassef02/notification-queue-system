@@ -5,7 +5,7 @@
 **Status**: Draft  
 **Input**: User description: "Enhance the notification queue system with advanced production features. Add: Dead Letter Queue, Scheduled jobs, Priority queue support, Rate limiting per provider, Idempotency handling."
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Time-Sensitive Delivery Control (Priority: P1)
 
@@ -16,6 +16,7 @@ As a system administrator, I want to schedule notifications for a future time an
 **Independent Test**: Enqueue a "High Priority" job and a "Delayed" job simultaneously; verify the High Priority job processes immediately while the Delayed job waits for its target timestamp.
 
 **Acceptance Scenarios**:
+
 1. **Given** a notification request with a `delay` of 1 hour, **When** enqueued, **Then** it remains in the queue and only processes after 1 hour.
 2. **Given** two notifications enqueued at the same time, **When** one has `priority: high` and the other `priority: low`, **Then** the high priority one is processed first.
 
@@ -30,6 +31,7 @@ As a developer, I want to limit the rate of notifications sent to a specific pro
 **Independent Test**: Enqueue 100 notifications for a provider with a rate limit of 10 per minute; verify that total delivery takes at least 10 minutes.
 
 **Acceptance Scenarios**:
+
 1. **Given** a provider-specific rate limit of 1 per second, **When** 5 notifications are enqueued, **Then** they are delivered at least 1 second apart.
 
 ---
@@ -43,6 +45,7 @@ As an operations engineer, I want notifications that exceed their retry limit to
 **Independent Test**: Simulate a persistent provider error for a notification; verify that after 5 retries, the notification status becomes `PERMANENT_FAILURE` and is accessible in the DLQ view.
 
 **Acceptance Scenarios**:
+
 1. **Given** a notification that fails 5 times, **When** the 6th attempt is reached, **Then** it is marked as `PERMANENT_FAILURE` and no more retries occur.
 
 ---
@@ -56,9 +59,10 @@ As a client application, I want to send the same notification multiple times wit
 **Independent Test**: Send two requests with the same `idempotencyKey` within a short window; verify only one notification is sent.
 
 **Acceptance Scenarios**:
+
 1. **Given** an existing notification with key `KEY_123`, **When** a new request arrives with key `KEY_123`, **Then** the second request returns the existing notification and does not enqueue a new job.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -74,7 +78,7 @@ As a client application, I want to send the same notification multiple times wit
 - **Notification**: Expands to include `priority`, `scheduledAt`, and `providerMetadata`.
 - **RateLimitConfig**: New entity to store provider-specific limits (e.g., `providerType`, `maxJobs`, `duration`).
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

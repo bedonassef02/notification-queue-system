@@ -6,15 +6,15 @@ The `NotificationLog` represents a single delivery attempt or state transition f
 
 ### Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | `UUID` | Unique identifier for the log entry. |
-| `notificationId` | `UUID` | Foreign key referencing the parent notification. |
-| `status` | `Enum` | The outcome of the attempt ([SENT, FAILED, PERMANENT_FAILURE]). |
-| `attemptNumber` | `Int` | Which retry attempt this was (1-based). [NEW] |
-| `errorMessage` | `Text?` | The error message from the provider if the attempt failed. |
-| `metadata` | `JsonB?` | Provider-specific response data (e.g., Message ID, detailed error codes). |
-| `createdAt` | `Timestamptz` | When the attempt was logged. |
+| Field            | Type          | Description                                                               |
+| ---------------- | ------------- | ------------------------------------------------------------------------- |
+| `id`             | `UUID`        | Unique identifier for the log entry.                                      |
+| `notificationId` | `UUID`        | Foreign key referencing the parent notification.                          |
+| `status`         | `Enum`        | The outcome of the attempt ([SENT, FAILED, PERMANENT_FAILURE]).           |
+| `attemptNumber`  | `Int`         | Which retry attempt this was (1-based). [NEW]                             |
+| `errorMessage`   | `Text?`       | The error message from the provider if the attempt failed.                |
+| `metadata`       | `JsonB?`      | Provider-specific response data (e.g., Message ID, detailed error codes). |
+| `createdAt`      | `Timestamptz` | When the attempt was logged.                                              |
 
 ### Relationships
 

@@ -3,6 +3,7 @@
 Auto-generated from all feature plans. Last updated: 2026-03-30
 
 ## Active Technologies
+
 - [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION] + [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION] (002-bullmq-queue-system)
 - [if applicable, e.g., PostgreSQL, CoreData, files or N/A] (002-bullmq-queue-system)
 - TypeScript / Node.js 20+ (Next.js 14 App Router) + `bullmq`, `ioredis`, `@prisma/client`, `zod` (main)
@@ -27,6 +28,7 @@ npm test; npm run lint
 TypeScript / Node.js 20+ (Next.js 14 App Router environment): Follow standard conventions
 
 ## Recent Changes
+
 - main: Added TypeScript / Node.js 20+ (Next.js 14 App Router) + `bullmq`, `ioredis`, `@prisma/client`, `zod`
 - 002-bullmq-queue-system: Added [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION] + [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]
 

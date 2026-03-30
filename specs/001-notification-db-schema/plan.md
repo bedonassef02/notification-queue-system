@@ -21,15 +21,15 @@ The objective is to implement a robust, production-ready PostgreSQL schema for a
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
-| Gate | Status | Rationale |
-| :--- | :--- | :--- |
-| **I. Queue-First Durability** | ✅ PASS | All notifications are persisted to the DB and enqueued to Redis before processing begins. |
-| **II. Provider Abstraction** | ✅ PASS | Infrastructure providers are masked behind domain-level interfaces in the design. |
-| **III. Immutable Audit Logging** | ✅ PASS | Every state change is recorded in the `notification_logs` table. |
-| **IV. Isolated Worker Execution** | ✅ PASS | Worker processing is decoupled from the user-facing Next.js API. |
-| **V. Defensive Failure Recovery** | ✅ PASS | Exponential backoff and a 3-retry limit are baked into the schema requirements. |
+| Gate                              | Status  | Rationale                                                                                 |
+| :-------------------------------- | :------ | :---------------------------------------------------------------------------------------- |
+| **I. Queue-First Durability**     | ✅ PASS | All notifications are persisted to the DB and enqueued to Redis before processing begins. |
+| **II. Provider Abstraction**      | ✅ PASS | Infrastructure providers are masked behind domain-level interfaces in the design.         |
+| **III. Immutable Audit Logging**  | ✅ PASS | Every state change is recorded in the `notification_logs` table.                          |
+| **IV. Isolated Worker Execution** | ✅ PASS | Worker processing is decoupled from the user-facing Next.js API.                          |
+| **V. Defensive Failure Recovery** | ✅ PASS | Exponential backoff and a 3-retry limit are baked into the schema requirements.           |
 
 ## Project Structure
 
@@ -58,4 +58,4 @@ src/
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
-*(No violations detected)*
+_(No violations detected)_

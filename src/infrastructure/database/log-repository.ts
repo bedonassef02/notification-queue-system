@@ -1,9 +1,15 @@
 // src/infrastructure/database/log-repository.ts
-import { prisma } from './prisma';
-import { NotificationStatus } from '@/domain/entities/notification';
+import { prisma } from "./prisma";
+import { NotificationStatus } from "@/domain/entities/notification";
 
 export class LogRepository {
-  async create(notificationId: string, status: NotificationStatus, attemptNumber: number, error?: string, metadata?: any) {
+  async create(
+    notificationId: string,
+    status: NotificationStatus,
+    attemptNumber: number,
+    error?: string,
+    metadata?: any,
+  ) {
     return prisma.notificationLog.create({
       data: {
         notificationId,
@@ -18,7 +24,7 @@ export class LogRepository {
   async findByNotificationId(notificationId: string) {
     return prisma.notificationLog.findMany({
       where: { notificationId },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { createdAt: "asc" },
     });
   }
 
@@ -33,7 +39,7 @@ export class LogRepository {
       include: {
         notification: true,
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 }

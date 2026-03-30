@@ -1,17 +1,17 @@
 // src/domain/entities/notification.ts (Refactored to types/constants)
 
 export enum NotificationType {
-  EMAIL = 'EMAIL',
-  SMS = 'SMS',
-  PUSH = 'PUSH',
+  EMAIL = "EMAIL",
+  SMS = "SMS",
+  PUSH = "PUSH",
 }
 
 export enum NotificationStatus {
-  PENDING = 'PENDING',
-  PROCESSING = 'PROCESSING',
-  SENT = 'SENT',
-  FAILED = 'FAILED',
-  PERMANENT_FAILURE = 'PERMANENT_FAILURE',
+  PENDING = "PENDING",
+  PROCESSING = "PROCESSING",
+  SENT = "SENT",
+  FAILED = "FAILED",
+  PERMANENT_FAILURE = "PERMANENT_FAILURE",
 }
 
 export interface Notification {

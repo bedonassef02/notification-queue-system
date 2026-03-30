@@ -1,6 +1,7 @@
 # Tasks: Notification Logging System
 
 ## Implementation Strategy
+
 - **MVP First**: Establish the database schema and basic logging service.
 - **Incremental Delivery**: Integrate logging into the worker and then expose via API.
 - **Verification**: Use Prisma Studio and API calls to confirm log integrity.

@@ -1,10 +1,16 @@
 // src/application/services/notification-service.ts
-import { NotificationRepository } from '@/infrastructure/database/notification-repository';
-import { LogRepository } from '@/infrastructure/database/log-repository';
-import { enqueueJob } from '@/infrastructure/queue/producer';
-import { NotificationType, NotificationStatus } from '@/domain/entities/notification';
-import { EnqueueNotificationSchema, EnqueueNotificationInput } from '@/shared/validators/notification-validator';
-import { LoggingService } from './logging-service';
+import { NotificationRepository } from "@/infrastructure/database/notification-repository";
+import { LogRepository } from "@/infrastructure/database/log-repository";
+import { enqueueJob } from "@/infrastructure/queue/producer";
+import {
+  NotificationType,
+  NotificationStatus,
+} from "@/domain/entities/notification";
+import {
+  EnqueueNotificationSchema,
+  EnqueueNotificationInput,
+} from "@/shared/validators/notification-validator";
+import { LoggingService } from "./logging-service";
 
 /**
  * Notification Service (Controller Pattern)
@@ -14,7 +20,7 @@ import { LoggingService } from './logging-service';
 export class NotificationService {
   constructor(
     private notificationRepository: NotificationRepository = new NotificationRepository(),
-    private loggingService: LoggingService = new LoggingService()
+    private loggingService: LoggingService = new LoggingService(),
   ) {}
 
   /**
@@ -25,8 +31,8 @@ export class NotificationService {
     const validatedInput = EnqueueNotificationSchema.parse(input);
 
     // 2. Persist to DB (Neon) via Repository
-    const scheduledAt = validatedInput.scheduledAt 
-      ? new Date(validatedInput.scheduledAt) 
+    const scheduledAt = validatedInput.scheduledAt
+      ? new Date(validatedInput.scheduledAt)
       : null;
 
     const notification = await this.notificationRepository.upsert({
@@ -42,16 +48,18 @@ export class NotificationService {
     // 3. Enqueue to Provider-Specific Queue
     // If the record exists and status is already SENT, we skip completely (Idempotency)
     if (notification.status === NotificationStatus.SENT) {
-      console.log(`[Idempotency] Notification ${notification.id} already SENT. Skipping enqueue.`);
+      console.log(
+        `[Idempotency] Notification ${notification.id} already SENT. Skipping enqueue.`,
+      );
       return notification;
     }
 
     if (notification.status === NotificationStatus.PENDING) {
-      const delay = scheduledAt 
-        ? Math.max(0, scheduledAt.getTime() - Date.now()) 
+      const delay = scheduledAt
+        ? Math.max(0, scheduledAt.getTime() - Date.now())
         : 0;
 
-      await enqueueJob('send-notification', {
+      await enqueueJob("send-notification", {
         id: notification.id,
         type: notification.type as unknown as NotificationType,
         name: `Notification-${notification.type as string}-${notification.id}`,

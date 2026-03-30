@@ -1,7 +1,7 @@
-import { NotificationService } from '@/application/services/notification-service';
-import { ApiResponse } from '@/shared/utils/api-response';
-import { AppError, NotFoundError } from '@/shared/utils/application-error';
-import { NextRequest } from 'next/server';
+import { NotificationService } from "@/application/services/notification-service";
+import { ApiResponse } from "@/shared/utils/api-response";
+import { AppError, NotFoundError } from "@/shared/utils/application-error";
+import { NextRequest } from "next/server";
 
 /**
  * GET /api/notifications/[id]/logs
@@ -9,7 +9,7 @@ import { NextRequest } from 'next/server';
  */
 export async function GET(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> },
 ) {
   const notificationService = new NotificationService();
 
@@ -19,9 +19,9 @@ export async function GET(
     // 1. Fetch notification and logs via Service
     const notification = await notificationService.findById(notificationId);
     if (!notification) {
-      throw new NotFoundError('Notification', notificationId);
+      throw new NotFoundError("Notification", notificationId);
     }
-    
+
     // 2. Fetch full delivery history
     const logs = await notificationService.getLogs(notificationId);
 
@@ -30,14 +30,15 @@ export async function GET(
       type: notification.type,
       status: notification.status,
       attempts: notification.attempts,
-      logs: logs
+      logs: logs,
     });
   } catch (error) {
     if (error instanceof AppError) {
       return ApiResponse.error(error.message, error.statusCode, error.details);
     }
 
-    const message = error instanceof Error ? error.message : 'Internal Server Error';
+    const message =
+      error instanceof Error ? error.message : "Internal Server Error";
     return ApiResponse.error(message, 500);
   }
 }

@@ -21,15 +21,15 @@ Implement a robust, immutable audit logging system for notification delivery att
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
-| Principle | Status | Note |
-|-----------|--------|------|
-| I. Queue-First Durability | PASS | Logging occurs within the background worker. |
-| II. Provider Abstraction | PASS | Logging processes the response from the provider factory. |
-| III. Immutable Audit Logging | PASS | Core purpose of this feature. |
-| IV. Isolated Worker Execution | PASS | Logging service will be used by the worker processor. |
-| V. Defensive Failure Recovery| PASS | Each retry attempt will be uniquely logged with its attempt number. |
+| Principle                     | Status | Note                                                                |
+| ----------------------------- | ------ | ------------------------------------------------------------------- |
+| I. Queue-First Durability     | PASS   | Logging occurs within the background worker.                        |
+| II. Provider Abstraction      | PASS   | Logging processes the response from the provider factory.           |
+| III. Immutable Audit Logging  | PASS   | Core purpose of this feature.                                       |
+| IV. Isolated Worker Execution | PASS   | Logging service will be used by the worker processor.               |
+| V. Defensive Failure Recovery | PASS   | Each retry attempt will be uniquely logged with its attempt number. |
 
 ## Project Structure
 
@@ -66,4 +66,4 @@ src/
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
-*No violations.*
+_No violations._

@@ -9,6 +9,7 @@ Welcome to your first Next.js application! **NotifyFlow** is a professional-grad
 We use a **Modern Service Architecture**. This pattern keeps your business logic separated from your infrastructure (DB/Queue).
 
 ### The Flow of Data
+
 Here is a visualization of what happens when someone sends a notification request:
 
 ```mermaid
@@ -28,9 +29,9 @@ sequenceDiagram
     Service->>DB: Save "PENDING" Notification
     Service->>Queue: Add Job (ID only)
     API->>User: Standardized Success Response
-    
+
     Note over Worker,Queue: ASYNCHRONOUS PROCESSING
-    
+
     Worker->>Queue: Pull Job
     Worker->>DB: Fetch & Update Status
     Worker->>Provider: Send Email/SMS/Push
@@ -43,22 +44,29 @@ sequenceDiagram
 ## 📂 2. Directory & File Breakdown
 
 ### `/src/app/api` (Thin Controllers)
+
 These routes act as simple endpoints that delegate logic to the Service layer.
+
 - `api/notifications/enqueue/route.ts`: Entry point for sending notifications.
 - `api/notifications/[id]/logs/route.ts`: Audit log retrieval.
 
 ### `/src/application/services` (The Brains)
+
 - `notification-service.ts`: The primary orchestrator. Uses methods like `create()`, `findAll()`, and `getLogs()`.
 
 ### `/src/shared/validators` (The Gatekeepers)
+
 - `notification-validator.ts`: Centralized Zod schemas shared across the whole project.
 
 ### `/src/infrastructure/database` (Data Access)
+
 We use a **Granular Repository Pattern**:
+
 - `notification-repository.ts`: Handles notification records (`findById`, `upsert`, `updateStatus`).
 - `log-repository.ts`: Handles delivery history (`create`, `findByNotificationId`).
 
 ### `/src/infrastructure/providers` (The Hands)
+
 - `factory.ts`: Uses the **Strategy Pattern** to dynamically pick the right provider (Email, SMS, or Push).
 
 ---

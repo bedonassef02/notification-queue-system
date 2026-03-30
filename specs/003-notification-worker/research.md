@@ -8,7 +8,7 @@ This research identifies best practices and patterns for handling asynchronous n
 
 - **Decision**: Standalone Worker Architecture.
 - **Rationale**: The worker is implemented under `src/workers` and runs as a separate Node.js process. This isolates it from the web server runtime (e.g., Vercel), allowing it to be horizontally scaled in a containerized environment (e.g., Docker) without impacting API latency.
-- **Alternatives considered**: 
+- **Alternatives considered**:
   - **In-process Next.js workers**: Rejected due to serverless runtime limits (Vercel Lambdas have strict timeouts).
   - **Edge Middleware**: Rejected as provider API calls require longer timeouts than supported by the Edge runtime.
 
@@ -30,8 +30,8 @@ This research identifies best practices and patterns for handling asynchronous n
 
 ## Decision Audit Log
 
-| Component | Decision | Rationale |
-| :--- | :--- | :--- |
-| **Worker Script** | `ts-node-esm src/workers/main-worker.ts` | Best for utilizing ESM shared modules and ensuring compatibility with TypeScript. |
-| **Provider Selection** | Factory Pattern | Allows dynamic channel selection at runtime without modifying the processor logic. |
-| **Error Handling** | Throws to BullMQ | Simple but effective; leverages BullMQ's state-management capabilities. |
+| Component              | Decision                                 | Rationale                                                                          |
+| :--------------------- | :--------------------------------------- | :--------------------------------------------------------------------------------- |
+| **Worker Script**      | `ts-node-esm src/workers/main-worker.ts` | Best for utilizing ESM shared modules and ensuring compatibility with TypeScript.  |
+| **Provider Selection** | Factory Pattern                          | Allows dynamic channel selection at runtime without modifying the processor logic. |
+| **Error Handling**     | Throws to BullMQ                         | Simple but effective; leverages BullMQ's state-management capabilities.            |

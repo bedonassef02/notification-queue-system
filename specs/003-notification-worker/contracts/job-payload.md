@@ -12,8 +12,8 @@ The payload must provide the internal notification identity for database reconci
 
 ```typescript
 export const JobInputSchema = z.object({
-  id: z.string().uuid(),         // Unique job identifier for BullMQ idempotency
-  name: z.string().min(1),       // Descriptive job name
+  id: z.string().uuid(), // Unique job identifier for BullMQ idempotency
+  name: z.string().min(1), // Descriptive job name
   data: z.object({
     notificationId: z.string().uuid(), // Reference to the Notification entity in DB
   }),

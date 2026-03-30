@@ -1,6 +1,6 @@
 // src/application/services/logging-service.ts
-import { LogRepository } from '@/infrastructure/database/log-repository';
-import { NotificationStatus } from '@/domain/entities/notification';
+import { LogRepository } from "@/infrastructure/database/log-repository";
+import { NotificationStatus } from "@/domain/entities/notification";
 
 /**
  * Logging Service
@@ -21,7 +21,7 @@ export class LoggingService {
     status: NotificationStatus,
     attemptNumber: number,
     error?: string,
-    metadata?: any
+    metadata?: any,
   ) {
     try {
       const log = await this.logRepository.create(
@@ -29,15 +29,18 @@ export class LoggingService {
         status,
         attemptNumber,
         error,
-        metadata
+        metadata,
       );
-      
+
       // Secondary sink: Structured console logging for observability
-      const logMessage = `[Notification ${status}] ID: ${notificationId} | Attempt: ${attemptNumber} ${error ? `| Error: ${error}` : ''}`;
-      
+      const logMessage = `[Notification ${status}] ID: ${notificationId} | Attempt: ${attemptNumber} ${error ? `| Error: ${error}` : ""}`;
+
       if (status === NotificationStatus.SENT) {
         console.info(logMessage);
-      } else if (status === NotificationStatus.FAILED || status === NotificationStatus.PERMANENT_FAILURE) {
+      } else if (
+        status === NotificationStatus.FAILED ||
+        status === NotificationStatus.PERMANENT_FAILURE
+      ) {
         console.error(logMessage);
       } else {
         console.log(logMessage);
@@ -46,7 +49,10 @@ export class LoggingService {
       return log;
     } catch (err) {
       // We don't want to fail the main process if logging fails, but we should report it.
-      console.error(`CRITICAL: Failed to write delivery log for ${notificationId}:`, err);
+      console.error(
+        `CRITICAL: Failed to write delivery log for ${notificationId}:`,
+        err,
+      );
     }
   }
 

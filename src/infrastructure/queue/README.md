@@ -13,15 +13,15 @@ This directory manages the core **Producer** logic for background jobs using **B
 Always use the `enqueueJob` helper from this directory to ensure your job is properly validated and deduplicated.
 
 ```typescript
-import { enqueueJob } from '@/infrastructure/queue/producer';
+import { enqueueJob } from "@/infrastructure/queue/producer";
 
-const transaction = await enqueueJob('process-payment', {
-  id: 'order_123', // Used for IDEMPOTENCY
-  name: 'Sync Stripe Transaction', // Display name for BullMQ logs
+const transaction = await enqueueJob("process-payment", {
+  id: "order_123", // Used for IDEMPOTENCY
+  name: "Sync Stripe Transaction", // Display name for BullMQ logs
   data: {
-    orderId: '123',
-    vendor: 'stripe'
-  }
+    orderId: "123",
+    vendor: "stripe",
+  },
 });
 ```
 
@@ -30,10 +30,13 @@ const transaction = await enqueueJob('process-payment', {
 ## Reliability Features
 
 ### Idempotency
+
 We map the `id` field from the `JobInput` directly to BullMQ's `jobId`. If a job with the same ID is already pending or completed, the duplicate will be rejected by Redis—protecting you from accidental double-processing.
 
 ### Exponential Backoff
+
 Failed jobs aren't retried immediately. The current config uses a **10s base delay** with an **exponential** strategy (10s, 20s, 40s), which gives external APIs like Stripe or Twilio enough time to recover from intermittent issues.
 
 ### Serverless Stability
+
 Connection pooling is minimized via **IORedis Singleton** and disabling `enableReadyCheck` to avoid timeout issues in Vercel/Azure/AWS Lambda functions.

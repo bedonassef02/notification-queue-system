@@ -30,5 +30,6 @@
 - [x] No implementation details leak into specification
 
 ## Notes
+
 - Integrated idempotency and audit trail as key functional requirements.
 - Validated performance expectations in success criteria.

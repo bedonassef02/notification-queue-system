@@ -1,10 +1,10 @@
 // src/workers/main-worker.ts
-import { Worker, Job } from 'bullmq';
-import { getConnection } from '@/infrastructure/queue/connection';
-import { QUEUE_NAMES } from '@/infrastructure/queue/instance';
-import { NotificationProcessor } from './processor';
-import { NotificationType } from '@/domain/entities/notification';
-import { AppConfig } from '@/shared/utils/config';
+import { Worker, Job } from "bullmq";
+import { getConnection } from "@/infrastructure/queue/connection";
+import { QUEUE_NAMES } from "@/infrastructure/queue/instance";
+import { NotificationProcessor } from "./processor";
+import { NotificationType } from "@/domain/entities/notification";
+import { AppConfig } from "@/shared/utils/config";
 
 const processor = new NotificationProcessor();
 
@@ -12,7 +12,10 @@ const processor = new NotificationProcessor();
  * Worker Configuration
  * Defines rate limits and concurrency for each provider type.
  */
-const WORKER_CONFIGS: Record<NotificationType, { concurrency: number; maxJobs: number; duration: number }> = {
+const WORKER_CONFIGS: Record<
+  NotificationType,
+  { concurrency: number; maxJobs: number; duration: number }
+> = {
   [NotificationType.EMAIL]: {
     concurrency: AppConfig.EMAIL_CONCURRENCY,
     maxJobs: AppConfig.EMAIL_MAX_LIMIT,
@@ -30,7 +33,7 @@ const WORKER_CONFIGS: Record<NotificationType, { concurrency: number; maxJobs: n
   },
 };
 
-console.log('Initializing Notification Workers...');
+console.log("Initializing Notification Workers...");
 
 const workers: Worker[] = [];
 
@@ -51,19 +54,21 @@ Object.entries(QUEUE_NAMES).forEach(([type, queueName]) => {
         max: config.maxJobs,
         duration: config.duration,
       },
-    }
+    },
   );
 
-  worker.on('completed', (job) => {
+  worker.on("completed", (job) => {
     console.log(`[${type}] Job ${job.id} completed successfully`);
   });
 
-  worker.on('failed', (job, err) => {
+  worker.on("failed", (job, err) => {
     console.error(`[${type}] Job ${job?.id} failed with ${err.message}`);
   });
 
   workers.push(worker);
-  console.log(`[Worker] Started for ${type} (Queue: ${queueName}) with concurrency ${config.concurrency} and rate limit ${config.maxJobs}/${config.duration}ms`);
+  console.log(
+    `[Worker] Started for ${type} (Queue: ${queueName}) with concurrency ${config.concurrency} and rate limit ${config.maxJobs}/${config.duration}ms`,
+  );
 });
 
 /**
@@ -71,11 +76,11 @@ Object.entries(QUEUE_NAMES).forEach(([type, queueName]) => {
  */
 const shutdown = async (signal: string) => {
   console.log(`${signal} received. Shutting down all workers gracefully...`);
-  await Promise.all(workers.map(w => w.close()));
+  await Promise.all(workers.map((w) => w.close()));
   process.exit(0);
 };
 
-process.on('SIGTERM', () => shutdown('SIGTERM'));
-process.on('SIGINT', () => shutdown('SIGINT'));
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));
 
-console.log('All Notification Workers are active!');
+console.log("All Notification Workers are active!");

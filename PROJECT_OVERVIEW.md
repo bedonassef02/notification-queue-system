@@ -5,11 +5,13 @@ NotifyFlow is a production-grade, asynchronous notification distribution system.
 ---
 
 ## 1. System Mission
+
 NotifyFlow acts as a centralized brain for notification delivery. It decouples the API ingestion from the actual delivery process using BullMQ, ensuring that provider latency does not affect the main application performance.
 
 ---
 
 ## 2. Core Architecture
+
 The system is built on a **Service-Oriented Design**:
 
 1.  **Presentation Layer** (`src/app/api`): Acts as thin controllers that validate HTTP requests and delegate to services.
@@ -24,6 +26,7 @@ The system is built on a **Service-Oriented Design**:
 ---
 
 ## 3. Data Flow
+
 1. **INGRESS**: `/api/notifications/enqueue` is called.
 2. **ORCHESTRATION**: `NotificationService.create()` validates input using a shared validator.
 3. **PERSISTENCE**: `NotificationRepository.upsert()` saves the record as `PENDING`.
@@ -54,6 +57,7 @@ src/
 ---
 
 ## 5. Advanced Queue Features
+
 - **Multi-Queue Routing**: Optimized isolation with specialized queues for `EMAIL`, `SMS`, and `PUSH`.
 - **Rate Limiting**: Provider-specific thresholds (e.g., 2 SMS/sec) to prevent API throttling.
 - **Scheduling**: Support for delayed delivery via `scheduledAt` timestamps.
@@ -63,6 +67,7 @@ src/
 ---
 
 ## 6. Reliability & Security
+
 - **Idempotency**: Business keys map to BullMQ `jobId` to avoid double-sends.
 - **Observability**: Detailed audit logs for every delivery attempt, including provider-specific metadata.
 - **Validation**: Strict schema enforcement at the service entry point using Zod.

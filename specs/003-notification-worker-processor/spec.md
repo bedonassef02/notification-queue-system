@@ -5,7 +5,7 @@
 **Status**: Draft  
 **Input**: User description: "Implement a worker processor for handling notification jobs using BullMQ. Requirements: Process job types: email, sms, push. Call appropriate service based on type. Update notification status in DB. Log each attempt (success/failure). Handle retries properly. Ensure idempotency (avoid duplicate sends)."
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Multi-Channel Asynchronous Delivery (Priority: P1)
 
@@ -51,7 +51,7 @@ As a system, I want to ensure that a notification is never sent twice to the sam
 
 1. **Given** a notification is already marked as `SENT` in the database, **When** a worker picks up a job for that ID, **Then** it should immediately complete without calling the provider.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -68,7 +68,7 @@ As a system, I want to ensure that a notification is never sent twice to the sam
 - **Audit Log**: The record of individual delivery attempts.
 - **Provider**: The abstraction for external services (ZeptoMail, Twilio, OneSignal).
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

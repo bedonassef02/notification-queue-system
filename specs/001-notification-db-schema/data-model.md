@@ -3,6 +3,7 @@
 ## 1. Entities
 
 ### Notification
+
 - `id` (UUID): Primary Key
 - `type` (Enum): `EMAIL`, `SMS`, `PUSH`
 - `recipient` (String): e.g., email address, phone number
@@ -15,6 +16,7 @@
 - `updatedAt` (Timestamp): Last state change time
 
 ### NotificationLog
+
 - `id` (UUID): Primary Key
 - `notificationId` (UUID, Foreign Key): Reference to the parent notification
 - `status` (Enum): The resulting status of the specific attempt
@@ -23,10 +25,12 @@
 - `createdAt` (Timestamp): Attempt execution time
 
 ## 2. Relationships
+
 - `Notification` has many `NotificationLog` (1:N)
 - `NotificationLog` belongs to `Notification`
 
 ## 3. Validation Rules
+
 - `recipient` must not be empty.
 - `type` must be one of the specified Enum values.
 - `payload` must be a valid JSON object.

@@ -1,5 +1,5 @@
 // src/domain/entities/notification-log.ts
-import { NotificationStatus } from '@prisma/client';
+import { NotificationStatus } from "@prisma/client";
 
 export interface NotificationLog {
   id: string;

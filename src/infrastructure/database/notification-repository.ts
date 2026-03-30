@@ -1,7 +1,10 @@
 // src/infrastructure/database/notification-repository.ts
-import { prisma } from './prisma';
-import { NotificationType, NotificationStatus } from '@/domain/entities/notification';
-import { Notification as PrismaNotification } from '@prisma/client';
+import { prisma } from "./prisma";
+import {
+  NotificationType,
+  NotificationStatus,
+} from "@/domain/entities/notification";
+import { Notification as PrismaNotification } from "@prisma/client";
 
 export class NotificationRepository {
   async findById(id: string) {
@@ -12,16 +15,23 @@ export class NotificationRepository {
 
   async findAll() {
     return prisma.notification.findMany({
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 
-  async updateStatus(id: string, status: NotificationStatus, attemptsCount?: number): Promise<PrismaNotification> {
+  async updateStatus(
+    id: string,
+    status: NotificationStatus,
+    attemptsCount?: number,
+  ): Promise<PrismaNotification> {
     return prisma.notification.update({
       where: { id },
       data: {
         status: status as any,
-        attempts: attemptsCount !== undefined ? { increment: attemptsCount } : undefined,
+        attempts:
+          attemptsCount !== undefined
+            ? { increment: attemptsCount }
+            : undefined,
         lastAttemptAt: new Date(),
       },
     });
@@ -38,7 +48,8 @@ export class NotificationRepository {
   }): Promise<PrismaNotification> {
     return prisma.notification.upsert({
       where: {
-        idempotencyKey: input.idempotencyKey || 'IDEM_KEY_NOT_PROVIDED_' + Date.now(),
+        idempotencyKey:
+          input.idempotencyKey || "IDEM_KEY_NOT_PROVIDED_" + Date.now(),
       },
       update: {},
       create: {

@@ -1,12 +1,12 @@
 // src/shared/utils/application-error.ts
-import { ZodError } from 'zod';
+import { ZodError } from "zod";
 
 export enum ErrorCode {
-  INTERNAL_ERROR = 'INTERNAL_ERROR',
-  VALIDATION_ERROR = 'VALIDATION_ERROR',
-  PROVIDER_ERROR = 'PROVIDER_ERROR',
-  NOT_FOUND = 'NOT_FOUND',
-  CONFLICT = 'CONFLICT',
+  INTERNAL_ERROR = "INTERNAL_ERROR",
+  VALIDATION_ERROR = "VALIDATION_ERROR",
+  PROVIDER_ERROR = "PROVIDER_ERROR",
+  NOT_FOUND = "NOT_FOUND",
+  CONFLICT = "CONFLICT",
 }
 
 /**
@@ -18,7 +18,12 @@ export class AppError extends Error {
   public readonly statusCode: number;
   public readonly details?: any;
 
-  constructor(message: string, code: ErrorCode = ErrorCode.INTERNAL_ERROR, statusCode: number = 500, details?: any) {
+  constructor(
+    message: string,
+    code: ErrorCode = ErrorCode.INTERNAL_ERROR,
+    statusCode: number = 500,
+    details?: any,
+  ) {
     super(message);
     this.name = this.constructor.name;
     this.code = code;
@@ -48,7 +53,7 @@ export class ValidationError extends AppError {
   }
 
   static fromZod(error: ZodError): ValidationError {
-    return new ValidationError('Validation Failed', error.issues);
+    return new ValidationError("Validation Failed", error.issues);
   }
 }
 

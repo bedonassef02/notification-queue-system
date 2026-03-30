@@ -137,4 +137,3 @@
 - [x] T019 [P] Create Dockerfile.worker for the notification worker processor
 - [x] T020 [P] Create docker-compose.yml for local development (App + Worker + Redis)
 - [x] T021 Validate containerized worker connectivity to Redis and DB
-

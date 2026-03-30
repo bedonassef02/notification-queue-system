@@ -1,6 +1,6 @@
 // src/shared/validators/payload-validator.ts
-import { z } from 'zod';
-import { NotificationType } from '@/domain/entities/notification';
+import { z } from "zod";
+import { NotificationType } from "@/domain/entities/notification";
 
 /**
  * Common payload schemas for all notification types.

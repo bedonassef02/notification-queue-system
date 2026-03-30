@@ -5,7 +5,7 @@
 **Status**: Draft  
 **Input**: User request: "Review the entire notification queue system implementation. Improve: Code structure, Naming consistency, Error handling, Scalability, Maintainability. Refactor where needed and explain improvements."
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Developer Productivity & Testability (Priority: P1)
 
@@ -16,6 +16,7 @@ As a backend developer, I want all services to use Dependency Injection so that 
 **Independent Test**: Successfully run a unit test for `NotificationService` with a mocked `NotificationRepository`.
 
 **Acceptance Scenarios**:
+
 1. **Given** a `NotificationService`, **When** initialized, **Then** it accepts its dependencies via constructor instead of instantiating them internally.
 
 ---
@@ -27,6 +28,7 @@ As an operations engineer, I want the application to validate all required confi
 **How it works**: Use a centralized `ConfigService` with Zod validation.
 
 **Acceptance Scenarios**:
+
 1. **Given** a missing `TWILIO_AUTH_TOKEN`, **When** the application starts, **Then** it exits immediately with a clear validation error.
 
 ---
@@ -36,9 +38,10 @@ As an operations engineer, I want the application to validate all required confi
 As a DevOps engineer, I want structured error logging across all layers so that I can distinguish between network timeouts, provider rejects, and internal logic bugs.
 
 **Acceptance Scenarios**:
+
 1. **Given** a provider failure, **When** logged, **Then** it includes a specific `errorCode` (e.g., `ERR_PROVIDER_REJECT`).
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -48,7 +51,7 @@ As a DevOps engineer, I want structured error logging across all layers so that 
 - **FR-004**: Replace `any` payloads with channel-specific **Payload Interfaces**.
 - **FR-005**: Standardize naming to **kebab-case** for file paths and **CamelCase** for classes.
 
-### Success Criteria *(mandatory)*
+### Success Criteria _(mandatory)_
 
 - **SC-001**: Zero `process.env` calls outside the `ConfigService`.
 - **SC-002**: 100% of services are testable via dependency injection.

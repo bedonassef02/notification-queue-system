@@ -5,9 +5,10 @@
 **Status**: Draft  
 **Input**: User description: "Design a PostgreSQL schema for a notification queue system with notifications and logs tables, tracking type, recipient, payload, status, and attempts."
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Enqueue and Track Notifications (Priority: P1)
+
 As a system service, I want to persist notification requests in a durable database so that they can be processed asynchronously without data loss.
 
 **Why this priority**: Core functionality. Without persistence, the queue system cannot guarantee delivery or recovery from crashes.
@@ -15,12 +16,14 @@ As a system service, I want to persist notification requests in a durable databa
 **Independent Test**: Verify that a notification record can be inserted with a JSON payload and retrieved by its unique ID.
 
 **Acceptance Scenarios**:
+
 1. **Given** a valid notification request (email, recipient, payload), **When** enqueued, **Then** a record is created in the `notifications` table with status `PENDING`.
 2. **Given** an enqueued notification, **When** queried by recipient, **Then** the correct payload and status are returned.
 
 ---
 
 ### User Story 2 - Audit Trail and Debugging (Priority: P2)
+
 As a developer or support agent, I want to see the full history of every attempt to send a notification so that I can troubleshoot delivery failures.
 
 **Why this priority**: Essential for operational reliability and customer support.
@@ -28,12 +31,13 @@ As a developer or support agent, I want to see the full history of every attempt
 **Independent Test**: Trigger multiple send attempts for a single notification and verify that each attempt creates a corresponding entry in the `notification_logs` table.
 
 **Acceptance Scenarios**:
+
 1. **Given** a notification that failed its first attempt, **When** retried, **Then** a new log entry is created with the error message and the `notifications` table `attempts` count increments.
 2. **Given** a specific notification ID, **When** fetching logs, **Then** all historical attempts are returned in chronological order.
 
 ---
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -45,12 +49,12 @@ As a developer or support agent, I want to see the full history of every attempt
 - **FR-006**: System MUST maintain high-precision timestamps for `created_at`, `updated_at`, and `last_attempt_at`.
 - **FR-007**: System MUST support an idempotency key to prevent duplicate notification creation for the same event.
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **Notification**: The root entity representing a message intent. Includes current state and configuration.
 - **NotificationLog**: A child entity representing a single execution attempt. Stores provider-specific feedback and error details.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 
