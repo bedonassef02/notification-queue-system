@@ -32,6 +32,8 @@ export class NotificationRepository {
     recipient: string;
     payload: any;
     idempotencyKey?: string | null;
+    priority?: number;
+    scheduledAt?: Date | null;
     status: NotificationStatus;
   }) {
     return prisma.notification.upsert({
@@ -44,6 +46,8 @@ export class NotificationRepository {
         recipient: input.recipient,
         payload: input.payload,
         idempotencyKey: input.idempotencyKey,
+        priority: input.priority || 0,
+        scheduledAt: input.scheduledAt,
         status: input.status as any,
       },
     });

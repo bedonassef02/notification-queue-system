@@ -56,4 +56,11 @@ export class LoggingService {
   async getHistory(notificationId: string) {
     return this.logRepository.findByNotificationId(notificationId);
   }
+
+  /**
+   * Retrieves all terminal failures.
+   */
+  async getDeadLetters() {
+    return this.logRepository.findDeadLetters();
+  }
 }

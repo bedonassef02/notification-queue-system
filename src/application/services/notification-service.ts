@@ -28,20 +28,33 @@ export class NotificationService {
     const validatedInput = EnqueueNotificationSchema.parse(input);
 
     // 2. Persist to DB (Neon) via Repository
+    const scheduledAt = validatedInput.scheduledAt 
+      ? new Date(validatedInput.scheduledAt) 
+      : null;
+
     const notification = await this.notificationRepository.upsert({
       type: validatedInput.type as NotificationType,
       recipient: validatedInput.recipient,
       payload: validatedInput.payload,
       idempotencyKey: validatedInput.idempotencyKey,
+      priority: validatedInput.priority,
+      scheduledAt: scheduledAt,
       status: NotificationStatus.PENDING,
     });
 
-    // 3. Enqueue to Redis via Unified Producer
+    // 3. Enqueue to Provider-Specific Queue
     if (notification.status === NotificationStatus.PENDING) {
+      const delay = scheduledAt 
+        ? Math.max(0, scheduledAt.getTime() - Date.now()) 
+        : 0;
+
       await enqueueJob('send-notification', {
         id: notification.id,
+        type: notification.type as unknown as NotificationType,
         name: `Notification-${notification.type as string}-${notification.id}`,
         data: { notificationId: notification.id },
+        priority: notification.priority,
+        delay: delay,
       });
     }
 
@@ -68,5 +81,12 @@ export class NotificationService {
    */
   async getLogs(notificationId: string) {
     return this.loggingService.getHistory(notificationId);
+  }
+
+  /**
+   * getDeadLetters - Retrieves all notifications that are permanently failed.
+   */
+  async getDeadLetters() {
+    return this.loggingService.getDeadLetters();
   }
 }

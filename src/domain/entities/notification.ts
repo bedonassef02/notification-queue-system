@@ -21,6 +21,8 @@ export interface Notification {
   payload: Record<string, any>;
   status: NotificationStatus;
   idempotencyKey?: string | null;
+  priority: number;
+  scheduledAt?: Date | null;
   attempts: number;
   lastAttemptAt?: Date | null;
   createdAt: Date;

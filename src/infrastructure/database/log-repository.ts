@@ -18,6 +18,21 @@ export class LogRepository {
   async findByNotificationId(notificationId: string) {
     return prisma.notificationLog.findMany({
       where: { notificationId },
+      orderBy: { createdAt: 'asc' },
+    });
+  }
+
+  /**
+   * Retrieves all notifications that have reached a terminal failure state.
+   */
+  async findDeadLetters() {
+    return prisma.notificationLog.findMany({
+      where: {
+        status: NotificationStatus.PERMANENT_FAILURE,
+      },
+      include: {
+        notification: true,
+      },
       orderBy: { createdAt: 'desc' },
     });
   }
