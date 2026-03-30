@@ -1,14 +1,15 @@
 import { NotificationService } from '@/application/services/notification-service';
 import { ApiResponse } from '@/shared/utils/api-response';
+import { NextRequest } from 'next/server';
 
 const notificationService = new NotificationService();
 
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const notificationId = params.id;
+    const { id: notificationId } = await context.params;
 
     // 1. Fetch notification and logs via Service
     const notification = await notificationService.findById(notificationId);

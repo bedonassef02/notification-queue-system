@@ -2,8 +2,9 @@
 import { Job } from 'bullmq';
 import { NotificationRepository } from '@/infrastructure/database/notification-repository';
 import { LogRepository } from '@/infrastructure/database/log-repository';
-import { NotificationStatus } from '@/domain/entities/notification';
+import { NotificationStatus, NotificationType } from '@/domain/entities/notification';
 import { NotificationProviderFactory } from '@/infrastructure/providers/factory';
+import { NotificationJobDataSchema } from '@/shared/validators/job-validator';
 
 export class NotificationProcessor {
   private notificationRepository: NotificationRepository;
@@ -15,9 +16,11 @@ export class NotificationProcessor {
   }
 
   async process(job: Job) {
-    const { notificationId } = job.data;
+    // 0. Validate job data
+    const { notificationId } = NotificationJobDataSchema.parse(job.data);
     
-    console.log(`Processing notification: ${notificationId}`);
+    console.log(`Processing notification: ${notificationId} (Job ID: ${job.id})`);
+
     
     // 1. Fetch notification
     const notification = await this.notificationRepository.findById(notificationId);
@@ -25,16 +28,19 @@ export class NotificationProcessor {
       throw new Error(`Notification ${notificationId} not found`);
     }
 
-    // skip if already sent
-    if (notification.status === NotificationStatus.SENT) return;
+    // 1.5 skip if already sent (Idempotency)
+    if (notification.status === NotificationStatus.SENT) {
+        console.log(`Notification ${notificationId} already SENT. Skipping to prevent duplicate.`);
+        return;
+    }
 
     try {
       // 2. Update status to PROCESSING
       await this.notificationRepository.updateStatus(notificationId, NotificationStatus.PROCESSING);
       
-      const provider = NotificationProviderFactory.getProvider(notification.type);
+      const provider = NotificationProviderFactory.getProvider(notification.type as unknown as NotificationType);
       if (!provider) {
-        throw new Error(`No provider found for type: ${notification.type}`);
+        throw new Error(`No provider found for type: ${notification.type as string}`);
       }
 
       // 3. Send notification

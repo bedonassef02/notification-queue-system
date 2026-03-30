@@ -1,6 +1,6 @@
 // src/infrastructure/providers/sms-twilio.ts
 import { INotificationProvider, ProviderResponse } from '@/domain/repositories/notification-provider';
-import { NotificationType } from '@prisma/client';
+import { NotificationType } from '@/domain/entities/notification';
 import twilio from 'twilio';
 
 export class TwilioProvider implements INotificationProvider {
@@ -16,7 +16,7 @@ export class TwilioProvider implements INotificationProvider {
 
   async send(recipient: string, payload: any): Promise<ProviderResponse> {
     try {
-      const response = await this.client.messages.create({
+      const response: any = await this.client.messages.create({
         to: recipient,
         from: process.env.TWILIO_PHONE_NUMBER || '',
         body: payload.message || payload.body || '',

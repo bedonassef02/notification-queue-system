@@ -7,32 +7,33 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "worker:start": "ts-node-esm src/workers/main-worker.ts",
+    "worker:start": "tsx src/workers/main-worker.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev"
   },
   "dependencies": {
+    "bullmq": "latest",
+    "dotenv": "latest",
+    "ioredis": "latest",
     "next": "latest",
+    "onesignal-node": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "bullmq": "latest",
-    "ioredis": "latest",
-    "@prisma/client": "latest",
-    "zod": "latest",
     "twilio": "latest",
     "zeptomail": "latest",
-    "onesignal-node": "latest",
-    "dotenv": "latest"
+    "zod": "latest"
   },
   "devDependencies": {
+    "@prisma/client": "^6.19.2",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "typescript": "latest",
-    "tailwindcss": "latest",
-    "postcss": "latest",
     "autoprefixer": "latest",
-    "prisma": "latest",
-    "ts-node": "latest"
+    "postcss": "latest",
+    "prisma": "^6.19.2",
+    "tailwindcss": "latest",
+    "ts-node": "latest",
+    "tsx": "^4.21.0",
+    "typescript": "latest"
   }
 }

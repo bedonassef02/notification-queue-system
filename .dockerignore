@@ -1,0 +1,30 @@
+# .dockerignore
+node_modules
+.next
+out
+build
+dist
+.env.local
+.env.*.local
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.git
+.gitignore
+.dockerignore
+Dockerfile
+Dockerfile.worker
+docker-compose.yml
+README.md
+LICENSE
+.vscode
+.idea
+.npm
+.gemini
+tmp
+brain
+specs
+tests
+# Prisma
+prisma/migrations

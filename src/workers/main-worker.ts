@@ -28,9 +28,14 @@ worker.on('failed', (job, err) => {
   console.log(`Job ${job?.id} failed with ${err.message}`);
 });
 
-process.on('SIGTERM', async () => {
-    console.log('Shutting down worker...');
+// Graceful shutdown
+const shutdown = async (signal: string) => {
+    console.log(`${signal} received. Shutting down worker gracefully...`);
     await worker.close();
-});
+    process.exit(0);
+};
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
 
 console.log('Notification Worker is running!');

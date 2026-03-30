@@ -1,6 +1,6 @@
 // src/infrastructure/providers/push-onesignal.ts
 import { INotificationProvider, ProviderResponse } from '@/domain/repositories/notification-provider';
-import { NotificationType } from '@prisma/client';
+import { NotificationType } from '@/domain/entities/notification';
 import * as OneSignal from 'onesignal-node';
 
 export class OneSignalProvider implements INotificationProvider {
@@ -16,7 +16,7 @@ export class OneSignalProvider implements INotificationProvider {
 
   async send(recipient: string, payload: any): Promise<ProviderResponse> {
     try {
-      const response = await this.client.createNotification({
+      const response: any = await this.client.createNotification({
         contents: {
           en: payload.message || payload.body || '',
         },

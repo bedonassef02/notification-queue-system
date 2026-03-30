@@ -1,6 +1,6 @@
 // src/infrastructure/providers/email-zeptomail.ts
 import { INotificationProvider, ProviderResponse } from '@/domain/repositories/notification-provider';
-import { NotificationType } from '@prisma/client';
+import { NotificationType } from '@/domain/entities/notification';
 import { SendMailClient } from 'zeptomail';
 
 export class ZeptoMailProvider implements INotificationProvider {
@@ -16,7 +16,7 @@ export class ZeptoMailProvider implements INotificationProvider {
 
   async send(recipient: string, payload: any): Promise<ProviderResponse> {
     try {
-      const response = await this.client.sendMail({
+      const response: any = await this.client.sendMail({
         from: {
           address: process.env.ZEPTOMAIL_SENDER_EMAIL || '',
           name: 'Notifications',

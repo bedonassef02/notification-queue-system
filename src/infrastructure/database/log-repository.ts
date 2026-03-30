@@ -8,7 +8,7 @@ export class LogRepository {
       data: {
         notificationId,
         status: status as any,
-        error,
+        errorMessage: error,
         metadata,
       },
     });
