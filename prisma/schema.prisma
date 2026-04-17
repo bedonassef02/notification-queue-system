@@ -7,6 +7,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum NotificationType {
@@ -39,6 +40,10 @@ model Notification {
   logs            NotificationLog[]
 
   @@index([status, type, createdAt])
+  @@index([recipient, status])
+  @@index([createdAt, status])
+  @@index([status, priority])
+  @@index([idempotencyKey, status])
   @@map("notifications")
 }
 

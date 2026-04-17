@@ -5,20 +5,18 @@ import {
 } from "@/domain/repositories/notification-provider";
 import { NotificationType } from "@/domain/entities/notification";
 import { PushPayload } from "@/domain/entities/payloads";
-import { AppConfig, AppConfigType } from "@/shared/utils/config";
-import { InfrastructureError } from "@/shared/utils/application-error";
+import { env } from "@/shared/validators/env-validator";
+import { AppError } from "@/shared/errors/error-handler";
 import * as OneSignal from "onesignal-node";
 
 export class OneSignalProvider implements INotificationProvider {
   type = NotificationType.PUSH;
   private client: OneSignal.Client;
-  private config: AppConfigType;
 
-  constructor(config: AppConfigType = AppConfig) {
-    this.config = config;
+  constructor() {
     this.client = new OneSignal.Client(
-      this.config.ONESIGNAL_APP_ID,
-      this.config.ONESIGNAL_REST_API_KEY,
+      env.ONESIGNAL_APP_ID,
+      env.ONESIGNAL_API_KEY,
     );
   }
 
@@ -45,9 +43,10 @@ export class OneSignalProvider implements INotificationProvider {
         metadata: response,
       };
     } catch (error: any) {
-      throw new InfrastructureError(
+      throw new AppError(
         `OneSignal delivery failed: ${error.message}`,
-        error,
+        502,
+        'PROVIDER_ERROR'
       );
     }
   }

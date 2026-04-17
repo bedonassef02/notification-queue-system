@@ -9,7 +9,12 @@
     "lint": "next lint",
     "worker:start": "tsx src/workers/main-worker.ts",
     "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev"
+    "prisma:migrate": "prisma migrate dev",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "test:unit": "vitest tests/unit",
+    "test:integration": "vitest tests/integration"
   },
   "dependencies": {
     "bullmq": "latest",
@@ -25,15 +30,20 @@
   },
   "devDependencies": {
     "@prisma/client": "^6.19.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "@vitest/ui": "^4.1.4",
     "autoprefixer": "latest",
     "postcss": "latest",
     "prisma": "^6.19.2",
+    "supertest": "^7.2.2",
     "tailwindcss": "latest",
     "ts-node": "latest",
     "tsx": "^4.21.0",
-    "typescript": "latest"
+    "typescript": "latest",
+    "vitest": "^4.1.4"
   }
 }

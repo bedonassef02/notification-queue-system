@@ -1,6 +1,7 @@
 import { NotificationService } from "@/application/services/notification-service";
 import { ApiResponse } from "@/shared/utils/api-response";
-import { AppError, NotFoundError } from "@/shared/utils/application-error";
+import { NotFoundError } from "@/shared/errors/error-handler";
+import { handleApiError } from "@/shared/utils/error-handler";
 import { NextRequest } from "next/server";
 
 /**
@@ -33,12 +34,6 @@ export async function GET(
       logs: logs,
     });
   } catch (error) {
-    if (error instanceof AppError) {
-      return ApiResponse.error(error.message, error.statusCode, error.details);
-    }
-
-    const message =
-      error instanceof Error ? error.message : "Internal Server Error";
-    return ApiResponse.error(message, 500);
+    return handleApiError(error);
   }
 }

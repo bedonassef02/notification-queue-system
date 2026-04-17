@@ -1,6 +1,6 @@
 import { NotificationService } from "@/application/services/notification-service";
 import { ApiResponse } from "@/shared/utils/api-response";
-import { AppError } from "@/shared/utils/application-error";
+import { handleApiError } from "@/shared/utils/error-handler";
 
 /**
  * GET /api/notifications/dlq
@@ -18,12 +18,6 @@ export async function GET() {
       data: deadLetters,
     });
   } catch (error) {
-    if (error instanceof AppError) {
-      return ApiResponse.error(error.message, error.statusCode, error.details);
-    }
-
-    const message =
-      error instanceof Error ? error.message : "Internal Server Error";
-    return ApiResponse.error(message, 500);
+    return handleApiError(error);
   }
 }

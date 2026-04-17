@@ -1,103 +1,134 @@
 // src/application/services/notification-service.ts
-import { NotificationRepository } from "@/infrastructure/database/notification-repository";
-import { LogRepository } from "@/infrastructure/database/log-repository";
-import { enqueueJob } from "@/infrastructure/queue/producer";
+import { NotificationRepository } from '@/infrastructure/database/notification-repository'
+import { LogRepository } from '@/infrastructure/database/log-repository'
+import { enqueueJob } from '@/infrastructure/queue/producer'
 import {
   NotificationType,
-  NotificationStatus,
-} from "@/domain/entities/notification";
+  NotificationStatus
+} from '@/domain/entities/notification'
 import {
   EnqueueNotificationSchema,
-  EnqueueNotificationInput,
-} from "@/shared/validators/notification-validator";
-import { LoggingService } from "./logging-service";
-
-/**
- * Notification Service (Controller Pattern)
- * Orchestrates all notification-related data logic.
- */
+  EnqueueNotificationInput
+} from '@/shared/validators/notification-validator'
+import { LoggingService } from './logging-service'
+import { RedisCache } from '@/infrastructure/queue/cache'
 
 export class NotificationService {
   constructor(
     private notificationRepository: NotificationRepository = new NotificationRepository(),
-    private loggingService: LoggingService = new LoggingService(),
+    private loggingService: LoggingService = new LoggingService()
   ) {}
 
-  /**
-   * create - Validates and enqueues a new notification.
-   */
   async create(input: EnqueueNotificationInput) {
-    // 1. Validate Input
-    const validatedInput = EnqueueNotificationSchema.parse(input);
+    const validatedInput = EnqueueNotificationSchema.parse(input)
 
-    // 2. Persist to DB (Neon) via Repository
-    const scheduledAt = validatedInput.scheduledAt
-      ? new Date(validatedInput.scheduledAt)
-      : null;
+    const cacheKey = RedisCache.generateKey('notification', validatedInput.idempotencyKey || validatedInput.recipient)
 
-    const notification = await this.notificationRepository.upsert({
+    const cached = await RedisCache.get(cacheKey)
+    if (cached) {
+      console.log(`[Cache] Notification found in cache: ${cacheKey}`)
+      return cached
+    }
+
+    const createInput = {
       type: validatedInput.type as NotificationType,
       recipient: validatedInput.recipient,
       payload: validatedInput.payload,
-      idempotencyKey: validatedInput.idempotencyKey,
-      priority: validatedInput.priority,
-      scheduledAt: scheduledAt,
-      status: NotificationStatus.PENDING,
-    });
+      idempotencyKey: validatedInput.idempotencyKey || undefined,
+      priority: validatedInput.priority as any,
+      scheduledAt: validatedInput.scheduledAt ? new Date(validatedInput.scheduledAt) : undefined
+    }
 
-    // 3. Enqueue to Provider-Specific Queue
-    // If the record exists and status is already SENT, we skip completely (Idempotency)
+    const existing = validatedInput.idempotencyKey
+      ? await this.notificationRepository.findByIdempotencyKey(validatedInput.idempotencyKey)
+      : null
+
+    let notification
+    if (existing) {
+      notification = existing
+    } else {
+      notification = await this.notificationRepository.create(createInput)
+    }
+
+    await RedisCache.set(cacheKey, notification, { ttl: 300 })
+
     if (notification.status === NotificationStatus.SENT) {
-      console.log(
-        `[Idempotency] Notification ${notification.id} already SENT. Skipping enqueue.`,
-      );
-      return notification;
+      console.log(`[Idempotency] Notification ${notification.id} already SENT. Skipping enqueue.`)
+      return notification
     }
 
     if (notification.status === NotificationStatus.PENDING) {
-      const delay = scheduledAt
-        ? Math.max(0, scheduledAt.getTime() - Date.now())
-        : 0;
+      const scheduledAt = createInput.scheduledAt
+      const delay = scheduledAt ? Math.max(0, scheduledAt.getTime() - Date.now()) : 0
 
-      await enqueueJob("send-notification", {
+      await enqueueJob('send-notification', {
         id: notification.id,
         type: notification.type as unknown as NotificationType,
         name: `Notification-${notification.type as string}-${notification.id}`,
         data: { notificationId: notification.id },
         priority: notification.priority,
-        delay: delay,
-      });
+        delay: delay
+      })
     }
 
-    return notification;
+    return notification
   }
 
-  /**
-   * findAll - Retrieves a list of all notification intents.
-   */
   async findAll() {
-    return this.notificationRepository.findAll();
+    const cacheKey = RedisCache.generateKey('notifications', 'pending')
+
+    const cached = await RedisCache.get(cacheKey)
+    if (cached) {
+      return cached
+    }
+
+    const notifications = await this.notificationRepository.findByStatus(NotificationStatus.PENDING)
+    await RedisCache.set(cacheKey, notifications, { ttl: 300 })
+
+    return notifications
   }
 
-  /**
-   * findById - Fetches a single notification by its internal storage ID.
-   */
   async findById(id: string) {
-    const notification = await this.notificationRepository.findById(id);
-    return notification;
+    const cacheKey = RedisCache.generateKey('notification', id)
+
+    const cached = await RedisCache.get(cacheKey)
+    if (cached) {
+      return cached
+    }
+
+    const notification = await this.notificationRepository.findById(id)
+    if (notification) {
+      await RedisCache.set(cacheKey, notification, { ttl: 300 })
+    }
+
+    return notification
   }
 
-  /**
-   * getLogs - Retrieves entire audit log history for a notification delivery.
-   */
   async getLogs(notificationId: string) {
-    return this.loggingService.getHistory(notificationId);
+    const cacheKey = RedisCache.generateKey('logs', notificationId)
+
+    const cached = await RedisCache.get(cacheKey)
+    if (cached) {
+      return cached
+    }
+
+    const logs = await this.loggingService.getHistory(notificationId)
+    await RedisCache.set(cacheKey, logs, { ttl: 60 })
+
+    return logs
   }
 
-  /**
-   * getDeadLetters - Retrieves all notifications that are permanently failed.
-   */
   async getDeadLetters() {
-    return this.loggingService.getDeadLetters();
+    const cacheKey = RedisCache.generateKey('notifications', 'dlq')
+
+    const cached = await RedisCache.get(cacheKey)
+    if (cached) {
+      return cached
+    }
+
+    const deadLetters = await this.loggingService.getDeadLetters()
+    await RedisCache.set(cacheKey, deadLetters, { ttl: 60 })
+
+    return deadLetters
   }
 }

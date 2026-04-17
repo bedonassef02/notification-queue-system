@@ -2,10 +2,6 @@
 import { LogRepository } from "@/infrastructure/database/log-repository";
 import { NotificationStatus } from "@/domain/entities/notification";
 
-/**
- * Logging Service
- * Provides a unified interface for recording notification delivery lifecycle events.
- */
 export class LoggingService {
   private logRepository: LogRepository;
 
@@ -14,7 +10,7 @@ export class LoggingService {
   }
 
   /**
-   * Records a notification delivery attempt with status, attempt number, and metadata.
+   * Records a notification delivery attempt with status, attempt number and metadata.
    */
   async logAttempt(
     notificationId: string,
@@ -24,26 +20,28 @@ export class LoggingService {
     metadata?: any,
   ) {
     try {
-      const log = await this.logRepository.create(
+      const log = await this.logRepository.create({
         notificationId,
-        status,
+        provider: 'default',
+        status: (status === NotificationStatus.SENT ? 'SUCCESS' as any : 
+                 status === NotificationStatus.FAILED || status === NotificationStatus.PERMANENT_FAILURE ? 'FAILURE' as any : 'SUCCESS'),
         attemptNumber,
-        error,
-        metadata,
-      );
+        errorMessage: error,
+        providerResponse: metadata
+      })
 
-      // Secondary sink: Structured console logging for observability
-      const logMessage = `[Notification ${status}] ID: ${notificationId} | Attempt: ${attemptNumber} ${error ? `| Error: ${error}` : ""}`;
+      const logStatus = status as any as NotificationStatus
+      const logMessage = `[Notification ${logStatus}] ID: ${notificationId} | Attempt: ${attemptNumber} ${error ? `| Error: ${error}` : ""}`;
 
-      if (status === NotificationStatus.SENT) {
-        console.info(logMessage);
+      if (logStatus === NotificationStatus.SENT) {
+        console.info(logMessage)
       } else if (
-        status === NotificationStatus.FAILED ||
-        status === NotificationStatus.PERMANENT_FAILURE
+        logStatus === NotificationStatus.FAILED ||
+        logStatus === NotificationStatus.PERMANENT_FAILURE
       ) {
-        console.error(logMessage);
+        console.error(logMessage)
       } else {
-        console.log(logMessage);
+        console.log(logMessage)
       }
 
       return log;

@@ -1,45 +1,76 @@
 // src/infrastructure/database/log-repository.ts
 import { prisma } from "./prisma";
-import { NotificationStatus } from "@/domain/entities/notification";
+import { NotificationLog, LogStatus, CreateLogInput } from "@/domain/entities/notification-log";
+import { ILogRepository } from "@/domain/repositories/ilog-repository";
 
-export class LogRepository {
-  async create(
-    notificationId: string,
-    status: NotificationStatus,
-    attemptNumber: number,
-    error?: string,
-    metadata?: any,
-  ) {
-    return prisma.notificationLog.create({
+export class LogRepository implements ILogRepository {
+  async create(input: CreateLogInput): Promise<NotificationLog> {
+    const data = await prisma.notificationLog.create({
       data: {
-        notificationId,
-        status: status as any,
-        attemptNumber,
-        errorMessage: error,
-        metadata,
-      },
-    });
+        notificationId: input.notificationId,
+        provider: input.provider,
+        status: input.status as any,
+        attemptNumber: input.attemptNumber,
+        errorMessage: input.errorMessage,
+        metadata: input.providerResponse as any
+      }
+    })
+
+    return this.mapToDomain(data)
   }
 
-  async findByNotificationId(notificationId: string) {
-    return prisma.notificationLog.findMany({
+  async findByNotificationId(notificationId: string): Promise<NotificationLog[]> {
+    const data = await prisma.notificationLog.findMany({
       where: { notificationId },
-      orderBy: { createdAt: "asc" },
-    });
+      orderBy: { createdAt: 'asc' }
+    })
+
+    return data.map(item => this.mapToDomain(item))
   }
 
-  /**
-   * Retrieves all notifications that have reached a terminal failure state.
-   */
+  async findById(id: string): Promise<NotificationLog | null> {
+    const data = await prisma.notificationLog.findUnique({
+      where: { id }
+    })
+
+    return data ? this.mapToDomain(data) : null
+  }
+
+  async delete(id: string): Promise<void> {
+    await prisma.notificationLog.delete({
+      where: { id }
+    })
+  }
+
+  async deleteByNotificationId(notificationId: string): Promise<void> {
+    await prisma.notificationLog.deleteMany({
+      where: { notificationId }
+    })
+  }
+
   async findDeadLetters() {
     return prisma.notificationLog.findMany({
       where: {
-        status: NotificationStatus.PERMANENT_FAILURE,
+        status: 'PERMANENT_FAILURE' as any
       },
       include: {
-        notification: true,
+        notification: true
       },
-      orderBy: { createdAt: "desc" },
-    });
+      orderBy: { createdAt: 'desc' }
+    })
+  }
+
+  private mapToDomain(data: any): NotificationLog {
+    return {
+      id: data.id,
+      notificationId: data.notificationId,
+      provider: 'default',
+      status: data.status as LogStatus,
+      errorMessage: data.errorMessage || undefined,
+      providerResponse: data.metadata as Record<string, unknown> | undefined,
+      attemptNumber: data.attemptNumber,
+      duration: undefined,
+      createdAt: data.createdAt
+    }
   }
 }

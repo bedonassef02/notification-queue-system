@@ -5,20 +5,18 @@ import {
 } from "@/domain/repositories/notification-provider";
 import { NotificationType } from "@/domain/entities/notification";
 import { SMSPayload } from "@/domain/entities/payloads";
-import { AppConfig, AppConfigType } from "@/shared/utils/config";
-import { InfrastructureError } from "@/shared/utils/application-error";
+import { env } from "@/shared/validators/env-validator";
+import { AppError } from "@/shared/errors/error-handler";
 import twilio from "twilio";
 
 export class TwilioProvider implements INotificationProvider {
   type = NotificationType.SMS;
   private client: twilio.Twilio;
-  private config: AppConfigType;
 
-  constructor(config: AppConfigType = AppConfig) {
-    this.config = config;
+  constructor() {
     this.client = twilio(
-      this.config.TWILIO_ACCOUNT_SID,
-      this.config.TWILIO_AUTH_TOKEN,
+      env.TWILIO_ACCOUNT_SID,
+      env.TWILIO_AUTH_TOKEN,
     );
   }
 
@@ -29,7 +27,7 @@ export class TwilioProvider implements INotificationProvider {
     try {
       const response: any = await this.client.messages.create({
         to: recipient,
-        from: this.config.TWILIO_PHONE_NUMBER,
+        from: env.TWILIO_PHONE_NUMBER,
         body: payload.message || "",
       });
 
@@ -39,9 +37,10 @@ export class TwilioProvider implements INotificationProvider {
         metadata: response,
       };
     } catch (error: any) {
-      throw new InfrastructureError(
+      throw new AppError(
         `Twilio delivery failed: ${error.message}`,
-        error,
+        502,
+        'PROVIDER_ERROR'
       );
     }
   }

@@ -5,20 +5,18 @@ import {
 } from "@/domain/repositories/notification-provider";
 import { NotificationType } from "@/domain/entities/notification";
 import { EmailPayload } from "@/domain/entities/payloads";
-import { AppConfig, AppConfigType } from "@/shared/utils/config";
-import { InfrastructureError } from "@/shared/utils/application-error";
+import { env } from "@/shared/validators/env-validator";
+import { AppError } from "@/shared/errors/error-handler";
 import { SendMailClient } from "zeptomail";
 
 export class ZeptoMailProvider implements INotificationProvider {
   type = NotificationType.EMAIL;
   private client: SendMailClient;
-  private config: AppConfigType;
 
-  constructor(config: AppConfigType = AppConfig) {
-    this.config = config;
+  constructor() {
     this.client = new SendMailClient({
       url: "https://api.zeptomail.com/",
-      token: this.config.ZEPTOMAIL_API_KEY,
+      token: env.ZEPTOMAIL_API_KEY,
     });
   }
 
@@ -29,7 +27,7 @@ export class ZeptoMailProvider implements INotificationProvider {
     try {
       const response: any = await this.client.sendMail({
         from: {
-          address: this.config.ZEPTOMAIL_SENDER_EMAIL,
+          address: env.ZEPTOMAIL_SENDER,
           name: "Notifications",
         },
         to: [{ email_address: { address: recipient, name: recipient } }],
@@ -43,9 +41,10 @@ export class ZeptoMailProvider implements INotificationProvider {
         metadata: response,
       };
     } catch (error: any) {
-      throw new InfrastructureError(
+      throw new AppError(
         `ZeptoMail delivery failed: ${error.message}`,
-        error,
+        502,
+        'PROVIDER_ERROR'
       );
     }
   }
